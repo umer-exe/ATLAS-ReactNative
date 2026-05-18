@@ -1,0 +1,171 @@
+{
+  "success": true,
+  "count": 8,
+  "data": [
+    {
+      "id": 1,
+      "title": "Discover Japan",
+      "slug": "discover-japan",
+      "location": "Tokyo, Kyoto, Osaka",
+      "duration": "10 Days / 9 Nights",
+      "price": "18000.00",
+      "type": "international",
+      "overview": "Experience the perfect blend of ancient traditions and modern innovation in Japan. This comprehensive tour takes you through bustling Tokyo, historic Kyoto, and vibrant Osaka.",
+      "highlights": [
+        "Visit iconic Tokyo Tower and Shibuya Crossing",
+        "Explore ancient temples in Kyoto",
+        "Traditional tea ceremony experience",
+        "Mount Fuji day trip",
+        "Osaka street food tour",
+        "Cherry blossom viewing (seasonal)"
+      ],
+      "is_featured": true,
+      "featured_image": null,
+      "thumbnail_image": "http://127.0.0.1:8000/images/tours/japan.jpg"
+    },
+    {
+      "id": 2,
+      "title": "Northern Pakistan",
+      "slug": "northern-pakistan",
+      "location": "Hunza, Skardu, Fairy Meadows",
+      "duration": "7 Days / 6 Nights",
+      "price": "899.00",
+      "type": "domestic",
+      "overview": "Embark on an unforgettable journey through the majestic mountains of Northern Pakistan. Experience breathtaking landscapes, warm hospitality, and adventure of a lifetime.",
+      "highlights": [
+        "Visit Hunza Valley and Baltit Fort",
+        "Explore Skardu and Shangrila Resort",
+        "Trek to Fairy Meadows with Nanga Parbat views",
+        "Experience local culture and cuisine",
+        "Visit Attabad Lake",
+        "Professional mountain guides"
+      ],
+      "is_featured": true,
+      "featured_image": null,
+      "thumbnail_image": "http://127.0.0.1:8000/images/tours/pakistan.jpg"
+    },
+    {
+      "id": 3,
+      "title": "European Highlights",
+      "slug": "european-highlights",
+      "location": "Paris, Rome, Barcelona",
+      "duration": "14 Days / 13 Nights",
+      "price": "3299.00",
+      "type": "international",
+      "overview": "Discover the best of Europe in this comprehensive tour covering three iconic cities. Experience world-class art, architecture, cuisine, and culture.",
+      "highlights": [
+        "Eiffel Tower and Louvre Museum in Paris",
+        "Colosseum and Vatican City in Rome",
+        "Sagrada Familia and Park Güell in Barcelona",
+        "High-speed train experiences",
+        "Guided city tours with local experts",
+        "Free time for personal exploration"
+      ],
+      "is_featured": true,
+      "featured_image": null,
+      "thumbnail_image": "http://127.0.0.1:8000/images/tours/europe.jpg"
+    },
+    {
+      "id": 4,
+      "title": "Thailand Paradise",
+      "slug": "thailand-beach-paradise",
+      "location": "Phuket, Bangkok, Krabi",
+      "duration": "8 Days / 7 Nights",
+      "price": "1799.00",
+      "type": "international",
+      "overview": "Sun-kissed beaches, emerald waters, and buzzing city life. From Bangkok's temples and markets to Phuket's island-hopping and Krabi's limestone cliffs, this is Thailand at its best.",
+      "highlights": [
+        "Grand Palace and Wat Pho in Bangkok",
+        "Floating market experience",
+        "Phuket island-hopping adventure",
+        "Krabi Railay Beach and Ao Nang promenade",
+        "Thai cooking class",
+        "Evening street food tours"
+      ],
+      "is_featured": true,
+      "featured_image": null,
+      "thumbnail_image": "http://127.0.0.1:8000/images/tours/thailand.jpg"
+    },
+    {
+      "id": 5,
+      "title": "Dubai Extravaganza",
+      "slug": "dubai-extravaganza",
+      "location": "Dubai, Abu Dhabi",
+      "duration": "5 Days / 4 Nights",
+      "price": "1299.00",
+      "type": "international",
+      "overview": "A showcase of futuristic architecture, desert adventures, and luxury shopping. Discover Dubai's glittering skyline and the cultural gems of Abu Dhabi.",
+      "highlights": [
+        "Burj Khalifa At The Top (non-peak)",
+        "Dubai Marina & Palm Jumeirah photo stops",
+        "Desert safari with dune bashing and BBQ dinner",
+        "Abu Dhabi Sheikh Zayed Grand Mosque",
+        "Old Dubai souks and Dubai Creek",
+        "Dubai Mall fountain show"
+      ],
+      "is_featured": false,
+      "featured_image": null,
+      "thumbnail_image": "http://127.0.0.1:8000/images/tours/dubai.jpg"
+    },
+    {
+      "id": 6,
+      "title": "Lahore Heritage Tour",
+      "slug": "lahore-heritage-tour",
+      "location": "Lahore",
+      "duration": "3 Days / 2 Nights",
+      "price": "399.00",
+      "type": "domestic",
+      "overview": "Dive into the cultural capital of Pakistan. Mughal-era monuments, rich cuisine, and vibrant bazaars make Lahore unforgettable.",
+      "highlights": [
+        "Badshahi Mosque and Lahore Fort (Shahi Qila)",
+        "Walled City heritage walk and Food Street",
+        "Shalimar Gardens and Lahore Museum",
+        "Wagah Border flag-lowering ceremony",
+        "Anarkali & Liberty market shopping"
+      ],
+      "is_featured": false,
+      "featured_image": null,
+      "thumbnail_image": "http://127.0.0.1:8000/images/tours/lahore.jpg"
+    },
+    {
+      "id": 7,
+      "title": "Coastal Pakistan Escape",
+      "slug": "coastal-pakistan-escape",
+      "location": "Karachi, Gwadar, Ormara",
+      "duration": "5 Days / 4 Nights",
+      "price": "599.00",
+      "type": "domestic",
+      "overview": "Follow the Makran Coastal Highway to pristine beaches, dramatic cliffs, and starry skies. A laid-back journey across Pakistan's south coast.",
+      "highlights": [
+        "Sunset at Ormara Hammerhead",
+        "Kund Malir Beach & Princess of Hope",
+        "Gwadar port city viewpoints",
+        "Hingol National Park landscapes",
+        "Karachi heritage & food tour"
+      ],
+      "is_featured": false,
+      "featured_image": null,
+      "thumbnail_image": "http://127.0.0.1:8000/images/tours/coast.jpg"
+    },
+    {
+      "id": 8,
+      "title": "Swat Valley Discovery",
+      "slug": "swat-valley-discovery",
+      "location": "Swat, Kalam, Mahodand",
+      "duration": "4 Days / 3 Nights",
+      "price": "499.00",
+      "type": "domestic",
+      "overview": "Lush valleys, rivers, and alpine lakes. Discover Swat's beauty from Mingora to Kalam, with an unforgettable trip to Mahodand Lake (seasonal access).",
+      "highlights": [
+        "Malam Jabba chairlift (seasonal)",
+        "Kalam Bazaar and Ushu Forest",
+        "Mahodand Lake jeep excursion",
+        "Swat Museum & Mingora riverfront",
+        "Local trout dinner experience"
+      ],
+      "is_featured": false,
+      "featured_image": null,
+      "thumbnail_image": "http://127.0.0.1:8000/images/tours/swat.jpg"
+    }
+  ]
+}
