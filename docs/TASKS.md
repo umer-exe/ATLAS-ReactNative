@@ -128,16 +128,16 @@ The Laravel website uses tour images for featured tours, tour cards, tour detail
 
 These images should be added separately from reference screenshots.
 
-- [ ] Create `assets/images/`
-- [ ] Create `assets/images/tours/`
+- [x] Create `assets/images/`
+- [x] Create `assets/images/tours/`
 - [ ] Add tour thumbnail/card images
 - [ ] Add tour detail hero images if different from thumbnails
 - [ ] Add gallery images used on Tour Detail screens
 - [ ] Add destination images used on Home screen
 - [ ] Add placeholder image if needed
 - [ ] Use clear file names such as `japan.jpg`, `northern-pakistan.jpg`, `europe.jpg`, `thailand.jpg`, `dubai.jpg`, `lahore.jpg`, `coastal-pakistan.jpg`, `swat.jpg`
-- [ ] Confirm app images are not stored inside `docs/references/`
-- [ ] Confirm reference screenshots are not used as app images
+- [x] Confirm app images are not stored inside `docs/references/`
+- [x] Confirm reference screenshots are not used as app images
 - [ ] Later connect these image files to `src/data/toursData.js`
 
 ## Commit
@@ -167,16 +167,16 @@ Create the React Native folder structure before writing full UI code.
 - [x] Create `src/navigation/`
 - [x] Create `src/screens/`
 - [x] Create `src/components/`
-- [ ] Create `src/components/ui/`
-- [ ] Create `src/components/home/`
-- [ ] Create `src/components/tours/`
-- [ ] Create `src/components/contact/`
-- [ ] Create `src/components/cart/`
-- [ ] Create `src/data/`
-- [ ] Create `src/context/`
-- [ ] Create `src/store/`
-- [ ] Create `src/styles/`
-- [ ] Confirm the project still runs
+- [x] Create `src/components/ui/`
+- [x] Create `src/components/home/`
+- [x] Create `src/components/tours/`
+- [x] Create `src/components/contact/`
+- [x] Create `src/components/cart/`
+- [x] Create `src/data/`
+- [x] Create `src/context/`
+- [x] Create `src/store/`
+- [x] Create `src/styles/`
+- [x] Confirm the project still runs
 - [ ] Commit folder structure checkpoint
 
 ---
@@ -197,23 +197,23 @@ Add navigation structure that naturally demonstrates the course navigation conce
 
 ## Package Tasks
 
-- [ ] Install React Navigation native package
-- [ ] Install native stack navigator
-- [ ] Install bottom tab navigator
-- [ ] Install drawer navigator
-- [ ] Install required gesture/safe area/screen packages
-- [ ] Confirm app still runs after package installation
+- [x] Install React Navigation native package
+- [x] Install native stack navigator
+- [x] Install bottom tab navigator
+- [x] Install drawer navigator
+- [x] Install required gesture/safe area/screen packages
+- [x] Confirm app still runs after package installation
 
 ## Navigation File Tasks
 
-- [ ] Create `src/navigation/RootNavigator.jsx`
-- [ ] Create `src/navigation/DrawerNavigator.jsx`
-- [ ] Create `src/navigation/TabNavigator.jsx`
-- [ ] Create `src/navigation/HomeStackNavigator.jsx`
-- [ ] Create `src/navigation/ToursStackNavigator.jsx`
-- [ ] Create `src/navigation/CartStackNavigator.jsx`
-- [ ] Connect `App.jsx` to `RootNavigator`
-- [ ] Use `NavigationContainer` only once
+- [x] Create `src/navigation/RootNavigator.jsx`
+- [x] Create `src/navigation/DrawerNavigator.jsx`
+- [x] Create `src/navigation/TabNavigator.jsx`
+- [x] Create `src/navigation/HomeStackNavigator.jsx`
+- [x] Create `src/navigation/ToursStackNavigator.jsx`
+- [x] Create `src/navigation/CartStackNavigator.jsx`
+- [x] Connect `App.jsx` to `RootNavigator`
+- [x] Use `NavigationContainer` only once
 - [ ] Confirm drawer navigation works
 - [ ] Confirm tab navigation works
 - [ ] Confirm stack navigation works
@@ -237,17 +237,17 @@ Create clean app-ready static data from the reference tour data and image assets
 
 ## Tasks
 
-- [ ] Review `docs/references/data/tours-reference.json`
-- [ ] Review images in `assets/images/tours/`
-- [ ] Create `src/data/toursData.js`
-- [ ] Convert tour reference data into React Native friendly static data
-- [ ] Add local image references or safe image placeholders
-- [ ] Include tour title, slug, location, duration, price, type, overview, highlights, and featured status
-- [ ] Add gallery image references where available
-- [ ] Create `src/data/testimonialsData.js`
-- [ ] Create `src/data/faqData.js`
-- [ ] Create destination data if needed for Home screen
-- [ ] Confirm static data imports correctly
+- [x] Review `docs/references/data/tours-reference.json`
+- [x] Review images in `assets/images/tours/`
+- [x] Create `src/data/toursData.js`
+- [x] Convert tour reference data into React Native friendly static data
+- [x] Add local image references or safe image placeholders
+- [x] Include tour title, slug, location, duration, price, type, overview, highlights, and featured status
+- [x] Add gallery image references where available
+- [x] Create `src/data/testimonialsData.js`
+- [x] Create `src/data/faqData.js`
+- [x] Create destination data if needed for Home screen
+- [x] Confirm static data imports correctly
 - [ ] Commit static app data setup
 
 ---
@@ -268,18 +268,18 @@ Create reusable UI components before building full screens.
 
 ## Tasks
 
-- [ ] Create `AppScreen`
-- [ ] Create `AppCard`
-- [ ] Create `AppButton`
-- [ ] Create `AppInput`
-- [ ] Create `AppBadge`
-- [ ] Create `SectionTitle`
-- [ ] Create `TourCard`
-- [ ] Create `DestinationCard`
-- [ ] Create `TestimonialCard`
-- [ ] Create `FAQItem`
-- [ ] Create basic style constants if useful
-- [ ] Test components on a temporary screen
+- [x] Create `AppScreen`
+- [x] Create `AppCard`
+- [x] Create `AppButton`
+- [x] Create `AppInput`
+- [x] Create `AppBadge`
+- [x] Create `SectionTitle`
+- [x] Create `TourCard`
+- [x] Create `DestinationCard`
+- [x] Create `TestimonialCard`
+- [x] Create `FAQItem`
+- [x] Create basic style constants if useful
+- [x] Test components on a temporary screen
 - [ ] Commit reusable UI components
 
 ---
@@ -300,69 +300,69 @@ Build the main customer-facing screens using static data and reusable components
 
 ## Home Screen Tasks
 
-- [ ] Build `HomeScreen`
-- [ ] Add hero section
-- [ ] Add featured tours section
-- [ ] Add destination cards
-- [ ] Add testimonials section
-- [ ] Add call-to-action section
-- [ ] Confirm Home screen looks good on mobile
+- [x] Build `HomeScreen`
+- [x] Add hero section
+- [x] Add featured tours section
+- [x] Add destination cards
+- [x] Add testimonials section
+- [x] Add call-to-action section
+- [x] Confirm Home screen looks good on mobile
 
 ## Tours Screen Tasks
 
-- [ ] Build `ToursScreen`
-- [ ] Add purple screen header
-- [ ] Add type filter buttons
-- [ ] Add destination search input
-- [ ] Add price filter inputs
-- [ ] Display tours with `FlatList`
-- [ ] Add filtering behavior with local state
-- [ ] Confirm tour cards render correctly
+- [x] Build `ToursScreen`
+- [x] Add purple screen header
+- [x] Add type filter buttons
+- [x] Add destination search input
+- [x] Add price filter inputs
+- [x] Display tours with `FlatList`
+- [x] Add filtering behavior with local state
+- [x] Confirm tour cards render correctly
 
 ## Tour Detail Screen Tasks
 
-- [ ] Build `TourDetailScreen`
-- [ ] Add hero image section
-- [ ] Add overview section
-- [ ] Add gallery section
-- [ ] Add itinerary section
-- [ ] Add highlights section
-- [ ] Add booking card
-- [ ] Add Add to Cart button placeholder
-- [ ] Confirm navigation from tour cards works
+- [x] Build `TourDetailScreen`
+- [x] Add hero image section
+- [x] Add overview section
+- [x] Add gallery section
+- [x] Add itinerary section
+- [x] Add highlights section
+- [x] Add booking card
+- [x] Add Add to Cart button placeholder
+- [x] Confirm navigation from tour cards works
 
 ## Contact Screen Tasks
 
-- [ ] Build `ContactScreen`
-- [ ] Add purple screen header
-- [ ] Add contact form
-- [ ] Add contact information card
-- [ ] Add location card
-- [ ] Add quick links section
-- [ ] Add FAQ section
-- [ ] Add simple form validation and alert
+- [x] Build `ContactScreen`
+- [x] Add purple screen header
+- [x] Add contact form
+- [x] Add contact information card
+- [x] Add location card
+- [x] Add quick links section
+- [x] Add FAQ section
+- [x] Add simple form validation and alert
 
 ## Cart Screen Tasks
 
-- [ ] Build `CartScreen`
-- [ ] Add cart header
-- [ ] Add customer information form
-- [ ] Add order summary card
-- [ ] Add tour item preview
-- [ ] Add quantity controls placeholder
-- [ ] Add payment method options
-- [ ] Add Confirm Booking button
+- [x] Build `CartScreen`
+- [x] Add cart header
+- [x] Add customer information form
+- [x] Add order summary card
+- [x] Add tour item preview
+- [x] Add quantity controls placeholder
+- [x] Add payment method options
+- [x] Add Confirm Booking button
 
 ## Order Confirmation Screen Tasks
 
-- [ ] Build `OrderConfirmationScreen`
-- [ ] Add confirmation card
-- [ ] Add fake order number
-- [ ] Add confirmed badge
-- [ ] Add customer information section
-- [ ] Add tour details section
-- [ ] Add total amount section
-- [ ] Add What's Next section
+- [x] Build `OrderConfirmationScreen`
+- [x] Add confirmation card
+- [x] Add fake order number
+- [x] Add confirmed badge
+- [x] Add customer information section
+- [x] Add tour details section
+- [x] Add total amount section
+- [x] Add What's Next section
 
 ## Commit
 
@@ -431,10 +431,10 @@ Clean up the static frontend before submission.
 
 ## Tasks
 
-- [ ] Review spacing and layout consistency
-- [ ] Review card consistency
-- [ ] Review button consistency
-- [ ] Review text sizes
+- [x] Review spacing and layout consistency
+- [x] Review card consistency
+- [x] Review button consistency
+- [x] Review text sizes
 - [ ] Review image sizing
 - [ ] Review mobile usability
 - [ ] Test drawer navigation
@@ -445,7 +445,7 @@ Clean up the static frontend before submission.
 - [ ] Test cart and confirmation flow
 - [ ] Remove unused starter code
 - [ ] Run `npx expo start`
-- [ ] Fix visible errors
+- [x] Fix visible errors
 - [ ] Commit frontend polish
 
 ---
