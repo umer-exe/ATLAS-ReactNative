@@ -52,7 +52,7 @@ export default function CartScreen({ navigation }) {
       })
     );
 
-    navigation.navigate('OrderConfirmation');
+    navigation.replace('OrderConfirmation');
   };
 
   const continueShopping = () => {

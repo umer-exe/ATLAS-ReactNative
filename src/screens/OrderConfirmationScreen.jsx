@@ -2,8 +2,10 @@ import { StyleSheet, Text, View } from 'react-native';
 import { useSelector } from 'react-redux';
 
 import AppBadge from '../components/ui/AppBadge';
+import AppButton from '../components/ui/AppButton';
 import AppCard from '../components/ui/AppCard';
 import AppScreen from '../components/ui/AppScreen';
+import ScreenHeader from '../components/ui/ScreenHeader';
 import SectionTitle from '../components/ui/SectionTitle';
 import { useTheme } from '../context/ThemeContext';
 import { toursData } from '../data/toursData';
@@ -12,7 +14,7 @@ import spacing from '../styles/spacing';
 
 const defaultTour = toursData[1];
 
-export default function OrderConfirmationScreen() {
+export default function OrderConfirmationScreen({ navigation }) {
   const { brandName, footerLinks, supportPhone } = useTheme();
   const cart = useSelector((state) => state.cart);
   const selectedTour =
@@ -23,13 +25,18 @@ export default function OrderConfirmationScreen() {
     : 'Address not provided';
   const totalAmount = `$${(selectedTour.price * cart.quantity).toLocaleString()}`;
 
+  const navigateHome = () => {
+    navigation.getParent()?.navigate('MainTabs', { screen: 'Home' });
+  };
+
+  const navigateTours = () => {
+    navigation.getParent()?.navigate('MainTabs', { screen: 'Tours' });
+  };
+
   return (
     <AppScreen scrollable>
       <View style={styles.container}>
-        <View style={styles.topBar}>
-          <Text style={styles.logo}>{brandName}</Text>
-          <Text style={styles.topHint}>Confirmation</Text>
-        </View>
+        <ScreenHeader brandName={brandName} pageLabel="Confirmation" />
 
         <AppCard style={styles.confirmationCard}>
           <View style={styles.cardHeader}>
@@ -86,6 +93,11 @@ export default function OrderConfirmationScreen() {
             <Text style={styles.step}>- You will receive a follow-up call or email for departure coordination.</Text>
             <Text style={styles.step}>- Payment and final itinerary details will be confirmed before travel.</Text>
           </View>
+
+          <View style={styles.actionButtons}>
+            <AppButton label="Back to Home" onPress={navigateHome} />
+            <AppButton label="Browse Tours" onPress={navigateTours} variant="secondary" />
+          </View>
         </AppCard>
 
         <View style={styles.footer}>
@@ -103,21 +115,6 @@ const styles = StyleSheet.create({
   container: {
     gap: spacing.xl,
     padding: spacing.lg,
-  },
-  topBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  logo: {
-    color: colors.navy,
-    fontSize: 24,
-    fontWeight: '800',
-  },
-  topHint: {
-    color: colors.primary,
-    fontSize: 14,
-    fontWeight: '700',
   },
   confirmationCard: {
     gap: spacing.lg,
@@ -202,6 +199,9 @@ const styles = StyleSheet.create({
     color: colors.textSoft,
     fontSize: 15,
     lineHeight: 22,
+  },
+  actionButtons: {
+    gap: spacing.sm,
   },
   footer: {
     borderRadius: 18,

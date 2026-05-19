@@ -8,11 +8,11 @@ const Stack = createNativeStackNavigator();
 export default function CartStackNavigator() {
   return (
     <Stack.Navigator screenOptions={{ headerTintColor: '#5b3cc4' }}>
-      <Stack.Screen name="Cart" component={CartScreen} options={{ title: 'Cart' }} />
+      <Stack.Screen name="Cart" component={CartScreen} options={{ headerShown: false }} />
       <Stack.Screen
         name="OrderConfirmation"
         component={OrderConfirmationScreen}
-        options={{ title: 'Order Confirmation' }}
+        options={{ headerShown: false }}
       />
     </Stack.Navigator>
   );
