@@ -7,17 +7,20 @@ import AppButton from '../components/ui/AppButton';
 import AppCard from '../components/ui/AppCard';
 import AppScreen from '../components/ui/AppScreen';
 import SectionTitle from '../components/ui/SectionTitle';
+import { useTheme } from '../context/ThemeContext';
 import { destinationsData, featuredTours } from '../data/toursData';
 import { testimonialsData } from '../data/testimonialsData';
 import colors from '../styles/colors';
 import spacing from '../styles/spacing';
 
 export default function HomeScreen({ navigation }) {
+  const { brandName, supportEmail, supportPhone, footerLinks } = useTheme();
+
   return (
     <AppScreen scrollable>
       <View style={styles.container}>
         <View style={styles.topBar}>
-          <Text style={styles.logo}>Atlas Tours</Text>
+          <Text style={styles.logo}>{brandName}</Text>
           <Text style={styles.menuHint}>Home</Text>
         </View>
 
@@ -39,16 +42,16 @@ export default function HomeScreen({ navigation }) {
               label="Domestic Tours"
               onPress={() => navigation.navigate('Tours')}
               style={styles.flexButton}
-              variant="secondary"
               textStyle={styles.secondaryHeroLabel}
+              variant="secondary"
             />
           </View>
         </AppCard>
 
         <SectionTitle
           eyebrow="Featured Tours"
-          title="Popular journeys worth saving"
           subtitle="A mobile-first version of the website's featured tours section, with clean cards and quick detail access."
+          title="Popular journeys worth saving"
         />
         <View style={styles.section}>
           {featuredTours.slice(0, 3).map((tour) => (
@@ -63,14 +66,10 @@ export default function HomeScreen({ navigation }) {
 
         <SectionTitle
           eyebrow="Top Destinations"
-          title="Around the world and close to home"
           subtitle="Destinations keep the darker image-overlay style from the web app while staying easy to scan on mobile."
+          title="Around the world and close to home"
         />
-        <ScrollView
-          contentContainerStyle={styles.horizontalSection}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-        >
+        <ScrollView contentContainerStyle={styles.horizontalSection} horizontal showsHorizontalScrollIndicator={false}>
           {destinationsData.map((destination) => (
             <View key={destination.id} style={styles.horizontalCard}>
               <DestinationCard destination={destination} />
@@ -80,14 +79,10 @@ export default function HomeScreen({ navigation }) {
 
         <SectionTitle
           eyebrow="Testimonials"
-          title="What travelers are saying"
           subtitle="White cards, light hierarchy, and short reviews keep the section familiar to the existing Atlas brand."
+          title="What travelers are saying"
         />
-        <ScrollView
-          contentContainerStyle={styles.horizontalSection}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-        >
+        <ScrollView contentContainerStyle={styles.horizontalSection} horizontal showsHorizontalScrollIndicator={false}>
           {testimonialsData.map((testimonial) => (
             <View key={testimonial.id} style={styles.testimonialCard}>
               <TestimonialCard testimonial={testimonial} />
@@ -108,11 +103,11 @@ export default function HomeScreen({ navigation }) {
         </AppCard>
 
         <View style={styles.footer}>
-          <Text style={styles.footerLogo}>Atlas Tours</Text>
+          <Text style={styles.footerLogo}>{brandName}</Text>
           <Text style={styles.footerText}>Explore trusted domestic and international travel experiences.</Text>
-          <Text style={styles.footerLinks}>Home  •  Tours  •  Contact  •  Cart</Text>
-          <Text style={styles.footerText}>Phone: +92 300 1234567</Text>
-          <Text style={styles.footerText}>Email: info@atlastours.pk</Text>
+          <Text style={styles.footerLinks}>{footerLinks}</Text>
+          <Text style={styles.footerText}>Phone: {supportPhone}</Text>
+          <Text style={styles.footerText}>Email: {supportEmail}</Text>
         </View>
       </View>
     </AppScreen>

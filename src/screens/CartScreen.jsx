@@ -1,29 +1,32 @@
 import { useState } from 'react';
 import { Alert, StyleSheet, Text, View } from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
 
-import AppBadge from '../components/ui/AppBadge';
 import AppButton from '../components/ui/AppButton';
 import AppCard from '../components/ui/AppCard';
 import AppInput from '../components/ui/AppInput';
 import AppScreen from '../components/ui/AppScreen';
 import SectionTitle from '../components/ui/SectionTitle';
+import { setCheckoutDetails, updateQuantity } from '../store/cartSlice';
 import { toursData } from '../data/toursData';
 import colors from '../styles/colors';
 import spacing from '../styles/spacing';
 
 export default function CartScreen({ navigation }) {
-  const selectedTour = toursData[1];
-  const [quantity, setQuantity] = useState(2);
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
-  const [address, setAddress] = useState('');
-  const [city, setCity] = useState('');
-  const [country, setCountry] = useState('');
-  const [paymentMethod, setPaymentMethod] = useState('cash');
+  const dispatch = useDispatch();
+  const cart = useSelector((state) => state.cart);
+  const selectedTour =
+    toursData.find((item) => item.slug === cart.selectedTourSlug) ?? toursData[1];
+  const [firstName, setFirstName] = useState(cart.customerInfo.firstName);
+  const [lastName, setLastName] = useState(cart.customerInfo.lastName);
+  const [email, setEmail] = useState(cart.customerInfo.email);
+  const [phone, setPhone] = useState(cart.customerInfo.phone);
+  const [address, setAddress] = useState(cart.customerInfo.address);
+  const [city, setCity] = useState(cart.customerInfo.city);
+  const [country, setCountry] = useState(cart.customerInfo.country);
+  const [paymentMethod, setPaymentMethod] = useState(cart.paymentMethod);
 
-  const totalAmount = selectedTour.price * quantity;
+  const totalAmount = selectedTour.price * cart.quantity;
   const formattedTotal = `$${totalAmount.toLocaleString()}`;
 
   const confirmBooking = () => {
@@ -32,13 +35,22 @@ export default function CartScreen({ navigation }) {
       return;
     }
 
-    navigation.navigate('OrderConfirmation', {
-      tourTitle: selectedTour.title,
-      customerName: `${firstName} ${lastName}`,
-      totalAmount: formattedTotal,
-      quantity,
-      paymentMethod,
-    });
+    dispatch(
+      setCheckoutDetails({
+        customerInfo: {
+          firstName,
+          lastName,
+          email,
+          phone,
+          address,
+          city,
+          country,
+        },
+        paymentMethod,
+      })
+    );
+
+    navigation.navigate('OrderConfirmation');
   };
 
   return (
@@ -47,13 +59,15 @@ export default function CartScreen({ navigation }) {
         <View style={styles.topBar}>
           <Text style={styles.logo}>Atlas Tours</Text>
           <View style={styles.cartBadge}>
-            <Text style={styles.cartBadgeText}>{quantity}</Text>
+            <Text style={styles.cartBadgeText}>{cart.quantity}</Text>
           </View>
         </View>
 
-        <AppCard style={styles.successCard}>
-          <Text style={styles.successText}>Tour added to cart successfully</Text>
-        </AppCard>
+        {cart.addedToCart ? (
+          <AppCard style={styles.successCard}>
+            <Text style={styles.successText}>Tour added to cart successfully</Text>
+          </AppCard>
+        ) : null}
 
         <AppCard style={styles.heroCard}>
           <Text style={styles.heroTitle}>Shopping Cart</Text>
@@ -63,8 +77,8 @@ export default function CartScreen({ navigation }) {
         <AppCard style={styles.formCard}>
           <SectionTitle
             eyebrow="Customer Information"
-            title="Who is traveling?"
             subtitle="This stays simple for the course project, but still matches the shape of the website checkout."
+            title="Who is traveling?"
           />
           <AppInput label="First Name" onChangeText={setFirstName} placeholder="First name" value={firstName} />
           <AppInput label="Last Name" onChangeText={setLastName} placeholder="Last name" value={lastName} />
@@ -78,8 +92,8 @@ export default function CartScreen({ navigation }) {
         <AppCard style={styles.paymentCard}>
           <SectionTitle
             eyebrow="Payment Method"
-            title="Choose an option"
             subtitle="No real payment flow is added here. These are presentation-only choices."
+            title="Choose an option"
           />
           <View style={styles.optionStack}>
             <AppButton
@@ -100,8 +114,8 @@ export default function CartScreen({ navigation }) {
         <AppCard style={styles.summaryCard}>
           <SectionTitle
             eyebrow="Order Summary"
-            title="Your selected tour"
             subtitle="A compact mobile summary of the package before booking confirmation."
+            title="Your selected tour"
           />
           <View style={styles.tourPreview}>
             <View style={styles.imagePlaceholder}>
@@ -110,16 +124,26 @@ export default function CartScreen({ navigation }) {
             <View style={styles.tourCopy}>
               <Text style={styles.tourTitle}>{selectedTour.title}</Text>
               <Text style={styles.tourMeta}>{selectedTour.duration}</Text>
-              <Text style={styles.tourMeta}>Departure: Flexible planning</Text>
+              <Text style={styles.tourMeta}>Departure: {cart.departureDate}</Text>
             </View>
           </View>
 
           <View style={styles.quantityRow}>
             <Text style={styles.quantityLabel}>Travelers</Text>
             <View style={styles.quantityControls}>
-              <AppButton label="-" onPress={() => setQuantity((value) => Math.max(1, value - 1))} variant="secondary" style={styles.quantityButton} />
-              <Text style={styles.quantityValue}>{quantity}</Text>
-              <AppButton label="+" onPress={() => setQuantity((value) => value + 1)} variant="secondary" style={styles.quantityButton} />
+              <AppButton
+                label="-"
+                onPress={() => dispatch(updateQuantity(cart.quantity - 1))}
+                style={styles.quantityButton}
+                variant="secondary"
+              />
+              <Text style={styles.quantityValue}>{cart.quantity}</Text>
+              <AppButton
+                label="+"
+                onPress={() => dispatch(updateQuantity(cart.quantity + 1))}
+                style={styles.quantityButton}
+                variant="secondary"
+              />
             </View>
           </View>
 

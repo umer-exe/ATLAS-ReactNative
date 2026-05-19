@@ -385,13 +385,13 @@ Make the booking flow feel realistic while staying frontend only.
 
 ## Tasks
 
-- [ ] Add selected tour to cart from Tour Detail screen
-- [ ] Show selected tour in Cart screen
-- [ ] Allow quantity changes
-- [ ] Calculate total price
-- [ ] Validate customer information form
-- [ ] Navigate from Cart screen to Order Confirmation screen
-- [ ] Show booking details on confirmation screen
+- [x] Add selected tour to cart from Tour Detail screen
+- [x] Show selected tour in Cart screen
+- [x] Allow quantity changes
+- [x] Calculate total price
+- [x] Validate customer information form
+- [x] Navigate from Cart screen to Order Confirmation screen
+- [x] Show booking details on confirmation screen
 - [ ] Commit cart and booking flow
 
 ---
@@ -410,15 +410,15 @@ Add required state management concepts for the course.
 
 ## Tasks
 
-- [ ] Add Redux Toolkit if approved
-- [ ] Create Redux store
-- [ ] Create cart slice
-- [ ] Store selected tour and quantity in Redux
-- [ ] Use `useSelector` in Cart and Confirmation screens
-- [ ] Use `useDispatch` from Tour Detail and Cart screens
-- [ ] Create Context API provider for theme or app settings
-- [ ] Use `useContext` in at least one meaningful place
-- [ ] Confirm Redux and Context behavior works
+- [x] Add Redux Toolkit if approved
+- [x] Create Redux store
+- [x] Create cart slice
+- [x] Store selected tour and quantity in Redux
+- [x] Use `useSelector` in Cart and Confirmation screens
+- [x] Use `useDispatch` from Tour Detail and Cart screens
+- [x] Create Context API provider for theme or app settings
+- [x] Use `useContext` in at least one meaningful place
+- [x] Confirm Redux and Context behavior works
 - [ ] Commit Redux and Context API setup
 
 ---

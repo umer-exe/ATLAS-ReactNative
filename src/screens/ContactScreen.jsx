@@ -7,11 +7,13 @@ import AppCard from '../components/ui/AppCard';
 import AppInput from '../components/ui/AppInput';
 import AppScreen from '../components/ui/AppScreen';
 import SectionTitle from '../components/ui/SectionTitle';
+import { useTheme } from '../context/ThemeContext';
 import { faqData } from '../data/faqData';
 import colors from '../styles/colors';
 import spacing from '../styles/spacing';
 
 export default function ContactScreen({ navigation }) {
+  const { brandName, supportEmail, supportPhone, footerLinks } = useTheme();
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
@@ -31,7 +33,7 @@ export default function ContactScreen({ navigation }) {
     <AppScreen scrollable>
       <View style={styles.container}>
         <View style={styles.topBar}>
-          <Text style={styles.logo}>Atlas Tours</Text>
+          <Text style={styles.logo}>{brandName}</Text>
           <Text style={styles.activeLink}>Contact</Text>
         </View>
 
@@ -43,12 +45,12 @@ export default function ContactScreen({ navigation }) {
         <AppCard style={styles.formCard}>
           <SectionTitle
             eyebrow="Send Us a Message"
-            title="Tell us about your trip"
             subtitle="A simple mobile form inspired by the website contact page."
+            title="Tell us about your trip"
           />
           <AppInput label="Full Name" onChangeText={setFullName} placeholder="Your full name" value={fullName} />
           <AppInput label="Email Address" onChangeText={setEmail} placeholder="name@example.com" value={email} />
-          <AppInput label="Phone Number" onChangeText={setPhone} placeholder="+92 300 1234567" value={phone} />
+          <AppInput label="Phone Number" onChangeText={setPhone} placeholder={supportPhone} value={phone} />
           <AppInput label="Subject" onChangeText={setSubject} placeholder="Tour planning, pricing, or support" value={subject} />
           <AppInput
             label="Message"
@@ -63,8 +65,8 @@ export default function ContactScreen({ navigation }) {
         <AppCard style={styles.infoCard}>
           <SectionTitle
             eyebrow="Contact Information"
-            title="Ways to reach Atlas Tours"
             subtitle="Quick details kept readable and stacked for mobile."
+            title="Ways to reach Atlas Tours"
           />
           <View style={styles.infoGroup}>
             <Text style={styles.infoLabel}>Office Address</Text>
@@ -72,7 +74,7 @@ export default function ContactScreen({ navigation }) {
           </View>
           <View style={styles.infoGroup}>
             <Text style={styles.infoLabel}>Phone</Text>
-            <Text style={styles.infoText}>+92 300 1234567</Text>
+            <Text style={styles.infoText}>{supportPhone}</Text>
           </View>
           <View style={styles.infoGroup}>
             <Text style={styles.infoLabel}>WhatsApp</Text>
@@ -80,7 +82,7 @@ export default function ContactScreen({ navigation }) {
           </View>
           <View style={styles.infoGroup}>
             <Text style={styles.infoLabel}>Email</Text>
-            <Text style={styles.infoText}>info@atlastours.pk</Text>
+            <Text style={styles.infoText}>{supportEmail}</Text>
           </View>
           <View style={styles.infoGroup}>
             <Text style={styles.infoLabel}>Office Hours</Text>
@@ -91,8 +93,8 @@ export default function ContactScreen({ navigation }) {
         <AppCard style={styles.purpleCard}>
           <SectionTitle
             eyebrow="Our Location"
-            title="Visit the main office"
             subtitle="The web app uses a stronger purple block here, so the mobile version keeps that contrast."
+            title="Visit the main office"
             tone="inverse"
           />
           <Text style={styles.purpleText}>Lahore office serving domestic and international bookings across Pakistan.</Text>
@@ -101,26 +103,26 @@ export default function ContactScreen({ navigation }) {
         <AppCard style={styles.quickLinksCard}>
           <SectionTitle
             eyebrow="Quick Links"
-            title="Where to go next"
             subtitle="Fast access to the main customer screens."
+            title="Where to go next"
             tone="inverse"
           />
           <View style={styles.quickLinks}>
-            <AppButton label="Browse Tours" onPress={() => navigation.navigate('Tours')} variant="secondary" style={styles.fullWidth} />
+            <AppButton label="Browse Tours" onPress={() => navigation.navigate('Tours')} style={styles.fullWidth} variant="secondary" />
             <AppButton
               label="View Cart"
               onPress={() => navigation.getParent()?.navigate('CartStack')}
-              variant="secondary"
               style={styles.fullWidth}
+              variant="secondary"
             />
-            <AppButton label="Explore Home" onPress={() => navigation.navigate('Home')} variant="secondary" style={styles.fullWidth} />
+            <AppButton label="Explore Home" onPress={() => navigation.navigate('Home')} style={styles.fullWidth} variant="secondary" />
           </View>
         </AppCard>
 
         <SectionTitle
           eyebrow="Frequently Asked Questions"
-          title="Common travel questions"
           subtitle="FAQ cards follow the simple stacked style from the design notes."
+          title="Common travel questions"
         />
         <View style={styles.faqStack}>
           {faqData.map((item) => (
@@ -129,9 +131,9 @@ export default function ContactScreen({ navigation }) {
         </View>
 
         <View style={styles.footer}>
-          <Text style={styles.footerLogo}>Atlas Tours</Text>
+          <Text style={styles.footerLogo}>{brandName}</Text>
           <Text style={styles.footerText}>Travel planning support for tours, pricing, and tailored itineraries.</Text>
-          <Text style={styles.footerLinks}>Home  •  Tours  •  Contact  •  Cart</Text>
+          <Text style={styles.footerLinks}>{footerLinks}</Text>
         </View>
       </View>
     </AppScreen>

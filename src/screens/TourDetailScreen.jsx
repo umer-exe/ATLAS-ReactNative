@@ -1,4 +1,6 @@
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useState } from 'react';
+import { StyleSheet, Text, View } from 'react-native';
+import { useDispatch } from 'react-redux';
 
 import AppBadge from '../components/ui/AppBadge';
 import AppButton from '../components/ui/AppButton';
@@ -6,6 +8,7 @@ import AppCard from '../components/ui/AppCard';
 import AppInput from '../components/ui/AppInput';
 import AppScreen from '../components/ui/AppScreen';
 import SectionTitle from '../components/ui/SectionTitle';
+import { setCartSelection } from '../store/cartSlice';
 import { toursData } from '../data/toursData';
 import colors from '../styles/colors';
 import spacing from '../styles/spacing';
@@ -15,16 +18,33 @@ const buildItinerary = (tour) =>
     id: `${tour.slug}-day-${index + 1}`,
     day: `Day ${index + 1}`,
     title: highlight,
-    description: `Planned experience for ${tour.title.toLowerCase()} with guided support, local coordination, and time to explore at a comfortable mobile-app-friendly pace.`,
+    description: `Planned experience for ${tour.title.toLowerCase()} with guided support, local coordination, and time to explore at a comfortable mobile-friendly pace.`,
   }));
 
 export default function TourDetailScreen({ navigation, route }) {
+  const dispatch = useDispatch();
   const routeTitle = route.params?.tourTitle;
   const tour =
     toursData.find((item) => item.title === routeTitle) ??
     toursData.find((item) => item.slug === route.params?.slug) ??
     toursData[0];
   const itinerary = buildItinerary(tour);
+  const [departureDate, setDepartureDate] = useState('');
+  const [travelers, setTravelers] = useState('2');
+
+  const addToCart = () => {
+    dispatch(
+      setCartSelection({
+        selectedTourSlug: tour.slug,
+        departureDate: departureDate.trim() || 'Flexible planning',
+        quantity: Math.max(1, Number(travelers) || 1),
+      })
+    );
+
+    navigation.getParent()?.getParent()?.navigate('CartStack', {
+      screen: 'Cart',
+    });
+  };
 
   return (
     <AppScreen scrollable>
@@ -46,8 +66,8 @@ export default function TourDetailScreen({ navigation, route }) {
         <AppCard style={styles.overviewCard}>
           <SectionTitle
             eyebrow="Overview"
-            title="About this journey"
             subtitle="A simplified mobile version of the overview content shown on the website detail page."
+            title="About this journey"
           />
           <Text style={styles.bodyText}>{tour.overview}</Text>
         </AppCard>
@@ -55,8 +75,8 @@ export default function TourDetailScreen({ navigation, route }) {
         <AppCard style={styles.galleryCard}>
           <SectionTitle
             eyebrow="Photo Gallery"
-            title="Trip moments"
             subtitle="Real gallery images can be connected later through `assets/images/tours/`."
+            title="Trip moments"
           />
           <View style={styles.galleryGrid}>
             {[tour.images.imageName, `${tour.slug}-view-1.jpg`, `${tour.slug}-view-2.jpg`].map((imageName) => (
@@ -70,19 +90,26 @@ export default function TourDetailScreen({ navigation, route }) {
         <AppCard style={styles.bookingCard}>
           <SectionTitle
             eyebrow="Booking"
+            subtitle="This phase keeps the flow frontend-only while making the booking handoff feel more realistic."
             title="Reserve your spot"
-            subtitle="Static inputs only for now. Real checkout behavior comes later."
           />
           <View style={styles.bookingHeader}>
             <Text style={styles.bookingPrice}>{tour.formattedPrice}</Text>
             <Text style={styles.bookingSubtext}>Starting price per traveler</Text>
           </View>
-          <AppInput label="Departure Date" placeholder="Select a departure date" value="" />
-          <AppInput label="Number of Travelers" placeholder="2" value="" />
-          <AppButton
-            label="Add to Cart"
-            onPress={() => navigation.getParent()?.getParent()?.navigate('CartStack')}
+          <AppInput
+            label="Departure Date"
+            onChangeText={setDepartureDate}
+            placeholder="Select a departure date"
+            value={departureDate}
           />
+          <AppInput
+            label="Number of Travelers"
+            onChangeText={setTravelers}
+            placeholder="2"
+            value={travelers}
+          />
+          <AppButton label="Add to Cart" onPress={addToCart} />
           <View style={styles.helpBox}>
             <Text style={styles.helpTitle}>Need Help?</Text>
             <Text style={styles.helpText}>Phone: +92 300 1234567</Text>
@@ -93,8 +120,8 @@ export default function TourDetailScreen({ navigation, route }) {
         <AppCard style={styles.itineraryCard}>
           <SectionTitle
             eyebrow="Detailed Itinerary"
-            title="Day by day plan"
             subtitle="The desktop site shows a richer itinerary, so this mobile version keeps each day readable and stacked."
+            title="Day by day plan"
           />
           <View style={styles.sectionStack}>
             {itinerary.map((item) => (
@@ -110,13 +137,13 @@ export default function TourDetailScreen({ navigation, route }) {
         <AppCard style={styles.highlightsCard}>
           <SectionTitle
             eyebrow="Highlights"
-            title="Why travelers pick this tour"
             subtitle="A simple checklist keeps the content easy to scan on mobile."
+            title="Why travelers pick this tour"
           />
           <View style={styles.sectionStack}>
             {tour.highlights.map((highlight) => (
               <View key={highlight} style={styles.highlightRow}>
-                <Text style={styles.highlightIcon}>•</Text>
+                <Text style={styles.highlightIcon}>-</Text>
                 <Text style={styles.highlightText}>{highlight}</Text>
               </View>
             ))}
@@ -126,7 +153,7 @@ export default function TourDetailScreen({ navigation, route }) {
         <View style={styles.footer}>
           <Text style={styles.footerLogo}>Atlas Tours</Text>
           <Text style={styles.footerText}>Trusted travel planning for domestic and international journeys.</Text>
-          <Text style={styles.footerLinks}>Home  •  Tours  •  Contact  •  Cart</Text>
+          <Text style={styles.footerLinks}>Home  |  Tours  |  Contact  |  Cart</Text>
         </View>
       </View>
     </AppScreen>
