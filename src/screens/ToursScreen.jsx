@@ -2,11 +2,12 @@ import { useState } from 'react';
 import { FlatList, StyleSheet, Text, View } from 'react-native';
 
 import TourCard from '../components/tours/TourCard';
-import AppBadge from '../components/ui/AppBadge';
 import AppButton from '../components/ui/AppButton';
 import AppCard from '../components/ui/AppCard';
 import AppInput from '../components/ui/AppInput';
 import AppScreen from '../components/ui/AppScreen';
+import ScreenHeader from '../components/ui/ScreenHeader';
+import ScreenHero from '../components/ui/ScreenHero';
 import { useTheme } from '../context/ThemeContext';
 import { toursData } from '../data/toursData';
 import colors from '../styles/colors';
@@ -57,15 +58,9 @@ export default function ToursScreen({ navigation }) {
 
   const renderHeader = () => (
     <View style={styles.headerContent}>
-      <View style={styles.topBar}>
-        <Text style={styles.logo}>{brandName}</Text>
-        <AppBadge label="Tours" />
-      </View>
+      <ScreenHeader brandName={brandName} pageLabel="Tours" />
 
-      <AppCard style={styles.heroCard}>
-        <Text style={styles.heroTitle}>Explore Our Tours</Text>
-        <Text style={styles.heroSubtitle}>Browse our complete collection of travel packages.</Text>
-      </AppCard>
+      <ScreenHero title="Explore Our Tours" subtitle="Browse our complete collection of travel packages." />
 
       <AppCard style={styles.filterCard}>
         <Text style={styles.filterLabel}>Tour Type</Text>
@@ -185,32 +180,6 @@ const styles = StyleSheet.create({
   headerContent: {
     gap: spacing.lg,
     marginBottom: spacing.lg,
-  },
-  topBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  logo: {
-    color: colors.navy,
-    fontSize: 24,
-    fontWeight: '800',
-  },
-  heroCard: {
-    backgroundColor: colors.primary,
-    borderColor: colors.primary,
-    gap: spacing.sm,
-  },
-  heroTitle: {
-    color: colors.textLight,
-    fontSize: 30,
-    fontWeight: '800',
-    lineHeight: 36,
-  },
-  heroSubtitle: {
-    color: 'rgba(255,255,255,0.9)',
-    fontSize: 15,
-    lineHeight: 22,
   },
   filterCard: {
     gap: spacing.md,

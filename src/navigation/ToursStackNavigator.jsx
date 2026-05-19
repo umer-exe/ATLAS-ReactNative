@@ -8,7 +8,7 @@ const Stack = createNativeStackNavigator();
 export default function ToursStackNavigator() {
   return (
     <Stack.Navigator screenOptions={{ headerTintColor: '#5b3cc4' }}>
-      <Stack.Screen name="ToursScreen" component={ToursScreen} options={{ title: 'Tours' }} />
+      <Stack.Screen name="ToursScreen" component={ToursScreen} options={{ headerShown: false }} />
       <Stack.Screen name="TourDetail" component={TourDetailScreen} options={{ title: 'Tour Details' }} />
     </Stack.Navigator>
   );

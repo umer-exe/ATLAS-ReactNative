@@ -6,6 +6,8 @@ import TourCard from '../components/tours/TourCard';
 import AppButton from '../components/ui/AppButton';
 import AppCard from '../components/ui/AppCard';
 import AppScreen from '../components/ui/AppScreen';
+import ScreenHeader from '../components/ui/ScreenHeader';
+import ScreenHero from '../components/ui/ScreenHero';
 import SectionTitle from '../components/ui/SectionTitle';
 import { useTheme } from '../context/ThemeContext';
 import { destinationsData, featuredTours } from '../data/toursData';
@@ -19,18 +21,13 @@ export default function HomeScreen({ navigation }) {
   return (
     <AppScreen scrollable>
       <View style={styles.container}>
-        <View style={styles.topBar}>
-          <Text style={styles.logo}>{brandName}</Text>
-          <Text style={styles.menuHint}>Home</Text>
-        </View>
+        <ScreenHeader brandName={brandName} pageLabel="Home" />
 
-        <AppCard style={styles.heroCard}>
-          <Text style={styles.heroEyebrow}>Curated journeys across Pakistan and beyond</Text>
-          <Text style={styles.heroTitle}>Discover Your Next Adventure</Text>
-          <Text style={styles.heroSubtitle}>
-            Explore international escapes and memorable local tours designed for travelers who want
-            something polished, simple, and easy to book on mobile.
-          </Text>
+        <ScreenHero
+          eyebrow="Curated journeys across Pakistan and beyond"
+          title="Discover Your Next Adventure"
+          subtitle="Explore international escapes and memorable local tours designed for travelers who want something polished, simple, and easy to book on mobile."
+        >
           <View style={styles.heroActions}>
             <AppButton
               label="International Tours"
@@ -46,7 +43,7 @@ export default function HomeScreen({ navigation }) {
               variant="secondary"
             />
           </View>
-        </AppCard>
+        </ScreenHero>
 
         <SectionTitle
           eyebrow="Featured Tours"
@@ -118,45 +115,6 @@ const styles = StyleSheet.create({
   container: {
     gap: spacing.xl,
     padding: spacing.lg,
-  },
-  topBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: spacing.xs,
-  },
-  logo: {
-    color: colors.navy,
-    fontSize: 24,
-    fontWeight: '800',
-  },
-  menuHint: {
-    color: colors.primary,
-    fontSize: 14,
-    fontWeight: '700',
-  },
-  heroCard: {
-    backgroundColor: colors.primaryDark,
-    borderColor: colors.primaryDark,
-    gap: spacing.lg,
-    shadowColor: colors.primaryDark,
-  },
-  heroEyebrow: {
-    color: 'rgba(255,255,255,0.82)',
-    fontSize: 12,
-    fontWeight: '700',
-    textTransform: 'uppercase',
-  },
-  heroTitle: {
-    color: colors.textLight,
-    fontSize: 32,
-    fontWeight: '800',
-    lineHeight: 38,
-  },
-  heroSubtitle: {
-    color: 'rgba(255,255,255,0.92)',
-    fontSize: 16,
-    lineHeight: 24,
   },
   heroActions: {
     gap: spacing.sm,

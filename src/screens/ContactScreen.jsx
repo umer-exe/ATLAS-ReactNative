@@ -6,6 +6,8 @@ import AppButton from '../components/ui/AppButton';
 import AppCard from '../components/ui/AppCard';
 import AppInput from '../components/ui/AppInput';
 import AppScreen from '../components/ui/AppScreen';
+import ScreenHeader from '../components/ui/ScreenHeader';
+import ScreenHero from '../components/ui/ScreenHero';
 import SectionTitle from '../components/ui/SectionTitle';
 import { useTheme } from '../context/ThemeContext';
 import { faqData } from '../data/faqData';
@@ -32,15 +34,9 @@ export default function ContactScreen({ navigation }) {
   return (
     <AppScreen scrollable>
       <View style={styles.container}>
-        <View style={styles.topBar}>
-          <Text style={styles.logo}>{brandName}</Text>
-          <Text style={styles.activeLink}>Contact</Text>
-        </View>
+        <ScreenHeader brandName={brandName} pageLabel="Contact" />
 
-        <AppCard style={styles.heroCard}>
-          <Text style={styles.heroTitle}>Get In Touch</Text>
-          <Text style={styles.heroSubtitle}>We're here to help plan your perfect journey.</Text>
-        </AppCard>
+        <ScreenHero title="Get In Touch" subtitle="We're here to help plan your perfect journey." />
 
         <AppCard style={styles.formCard}>
           <SectionTitle
@@ -160,37 +156,6 @@ const styles = StyleSheet.create({
   container: {
     gap: spacing.xl,
     padding: spacing.lg,
-  },
-  topBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  logo: {
-    color: colors.navy,
-    fontSize: 24,
-    fontWeight: '800',
-  },
-  activeLink: {
-    color: colors.primary,
-    fontSize: 14,
-    fontWeight: '700',
-  },
-  heroCard: {
-    backgroundColor: colors.primary,
-    borderColor: colors.primary,
-    gap: spacing.sm,
-  },
-  heroTitle: {
-    color: colors.textLight,
-    fontSize: 30,
-    fontWeight: '800',
-    lineHeight: 36,
-  },
-  heroSubtitle: {
-    color: 'rgba(255,255,255,0.9)',
-    fontSize: 15,
-    lineHeight: 22,
   },
   formCard: {
     gap: spacing.md,
