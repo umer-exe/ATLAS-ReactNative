@@ -51,11 +51,6 @@ export default function TourDetailScreen({ navigation, route }) {
   return (
     <AppScreen scrollable>
       <View style={styles.container}>
-        <View style={styles.topBar}>
-          <Text style={styles.logo}>{brandName}</Text>
-          <AppBadge label="Tour Detail" />
-        </View>
-
         <AppCard style={styles.heroCard}>
           <Text style={styles.heroImageHint}>{tour.images.imageName}</Text>
           <AppBadge label={`${tour.type} tour`} tone={tour.type === 'domestic' ? 'success' : 'default'} />
@@ -167,16 +162,6 @@ const styles = StyleSheet.create({
   container: {
     gap: spacing.xl,
     padding: spacing.lg,
-  },
-  topBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  logo: {
-    color: colors.navy,
-    fontSize: 24,
-    fontWeight: '800',
   },
   heroCard: {
     backgroundColor: colors.primaryDark,
