@@ -64,8 +64,8 @@ export default function CartScreen({ navigation }) {
       <View style={styles.container}>
         <View style={styles.topBar}>
           <Text style={styles.logo}>{brandName}</Text>
-          <View style={styles.cartBadge}>
-            <Text style={styles.cartBadgeText}>{cart.quantity}</Text>
+          <View style={styles.cartPill}>
+            <Text style={styles.cartPillText}>Cart • {cart.quantity}</Text>
           </View>
         </View>
 
@@ -201,19 +201,18 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: '800',
   },
-  cartBadge: {
-    minWidth: 30,
-    height: 30,
-    borderRadius: 15,
-    paddingHorizontal: spacing.sm,
-    backgroundColor: colors.success,
-    alignItems: 'center',
-    justifyContent: 'center',
+  cartPill: {
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xs,
+    borderRadius: 999,
+    backgroundColor: colors.primaryLight,
+    borderWidth: 1,
+    borderColor: colors.primaryLight,
   },
-  cartBadgeText: {
-    color: colors.textLight,
+  cartPillText: {
+    color: colors.primaryDark,
     fontSize: 13,
-    fontWeight: '800',
+    fontWeight: '700',
   },
   successCard: {
     backgroundColor: '#DCFCE7',
