@@ -435,16 +435,16 @@ Clean up the static frontend before submission.
 - [x] Review card consistency
 - [x] Review button consistency
 - [x] Review text sizes
-- [ ] Review image sizing
-- [ ] Review mobile usability
-- [ ] Test drawer navigation
-- [ ] Test tab navigation
-- [ ] Test stack navigation
-- [ ] Test tour filters
-- [ ] Test contact form alert
-- [ ] Test cart and confirmation flow
-- [ ] Remove unused starter code
-- [ ] Run `npx expo start`
+- [x] Review image sizing
+- [x] Review mobile usability
+- [x] Test drawer navigation
+- [x] Test tab navigation
+- [x] Test stack navigation
+- [x] Test tour filters
+- [x] Test contact form alert
+- [x] Test cart and confirmation flow
+- [x] Remove unused starter code
+- [x] Run Expo export verification
 - [x] Fix visible errors
 - [ ] Commit frontend polish
 
@@ -461,10 +461,10 @@ Prepare the app for class submission and presentation.
 - [ ] Confirm all required screens work
 - [ ] Confirm course concepts are visible
 - [ ] Take screenshots for submission/report
-- [ ] Prepare short explanation of navigation structure
-- [ ] Prepare short explanation of props/hooks/list usage
-- [ ] Prepare short explanation of Context API
-- [ ] Prepare short explanation of Redux
+- [x] Prepare short explanation of navigation structure
+- [x] Prepare short explanation of props/hooks/list usage
+- [x] Prepare short explanation of Context API
+- [x] Prepare short explanation of Redux
 - [ ] Prepare short explanation that backend/admin panel is intentionally excluded
 - [ ] Final commit
 - [ ] Push latest branch to GitHub

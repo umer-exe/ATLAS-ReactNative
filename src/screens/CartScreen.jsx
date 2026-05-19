@@ -7,6 +7,7 @@ import AppCard from '../components/ui/AppCard';
 import AppInput from '../components/ui/AppInput';
 import AppScreen from '../components/ui/AppScreen';
 import SectionTitle from '../components/ui/SectionTitle';
+import { useTheme } from '../context/ThemeContext';
 import { setCheckoutDetails, updateQuantity } from '../store/cartSlice';
 import { toursData } from '../data/toursData';
 import colors from '../styles/colors';
@@ -14,6 +15,7 @@ import spacing from '../styles/spacing';
 
 export default function CartScreen({ navigation }) {
   const dispatch = useDispatch();
+  const { brandName } = useTheme();
   const cart = useSelector((state) => state.cart);
   const selectedTour =
     toursData.find((item) => item.slug === cart.selectedTourSlug) ?? toursData[1];
@@ -53,11 +55,15 @@ export default function CartScreen({ navigation }) {
     navigation.navigate('OrderConfirmation');
   };
 
+  const continueShopping = () => {
+    navigation.getParent()?.navigate('MainTabs', { screen: 'Tours' });
+  };
+
   return (
     <AppScreen scrollable>
       <View style={styles.container}>
         <View style={styles.topBar}>
-          <Text style={styles.logo}>Atlas Tours</Text>
+          <Text style={styles.logo}>{brandName}</Text>
           <View style={styles.cartBadge}>
             <Text style={styles.cartBadgeText}>{cart.quantity}</Text>
           </View>
@@ -80,10 +86,25 @@ export default function CartScreen({ navigation }) {
             subtitle="This stays simple for the course project, but still matches the shape of the website checkout."
             title="Who is traveling?"
           />
-          <AppInput label="First Name" onChangeText={setFirstName} placeholder="First name" value={firstName} />
-          <AppInput label="Last Name" onChangeText={setLastName} placeholder="Last name" value={lastName} />
-          <AppInput label="Email Address" onChangeText={setEmail} placeholder="name@example.com" value={email} />
-          <AppInput label="Phone Number" onChangeText={setPhone} placeholder="+92 300 1234567" value={phone} />
+          <AppInput label="First Name" onChangeText={setFirstName} placeholder="First name" returnKeyType="next" value={firstName} />
+          <AppInput label="Last Name" onChangeText={setLastName} placeholder="Last name" returnKeyType="next" value={lastName} />
+          <AppInput
+            autoCapitalize="none"
+            keyboardType="email-address"
+            label="Email Address"
+            onChangeText={setEmail}
+            placeholder="name@example.com"
+            returnKeyType="next"
+            value={email}
+          />
+          <AppInput
+            keyboardType="phone-pad"
+            label="Phone Number"
+            onChangeText={setPhone}
+            placeholder="+92 300 1234567"
+            returnKeyType="next"
+            value={phone}
+          />
           <AppInput label="Address" multiline onChangeText={setAddress} placeholder="Street address" value={address} />
           <AppInput label="City" onChangeText={setCity} placeholder="Lahore" value={city} />
           <AppInput label="Country" onChangeText={setCountry} placeholder="Pakistan" value={country} />
@@ -157,6 +178,7 @@ export default function CartScreen({ navigation }) {
           </View>
 
           <AppButton label="Confirm Booking" onPress={confirmBooking} />
+          <AppButton label="Continue Shopping" onPress={continueShopping} variant="secondary" />
           <Text style={styles.termsText}>By confirming, you agree to Atlas Tours booking terms and privacy guidance.</Text>
         </AppCard>
       </View>
@@ -235,6 +257,7 @@ const styles = StyleSheet.create({
   },
   tourPreview: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
     gap: spacing.md,
     alignItems: 'center',
   },
@@ -255,6 +278,7 @@ const styles = StyleSheet.create({
   },
   tourCopy: {
     flex: 1,
+    minWidth: 180,
     gap: 4,
   },
   tourTitle: {
@@ -268,6 +292,8 @@ const styles = StyleSheet.create({
   },
   quantityRow: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: spacing.md,
     alignItems: 'center',
     justifyContent: 'space-between',
   },

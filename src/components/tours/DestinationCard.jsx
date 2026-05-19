@@ -45,9 +45,11 @@ const styles = StyleSheet.create({
     color: colors.surface,
     fontSize: 20,
     fontWeight: '800',
+    lineHeight: 26,
   },
   location: {
     color: 'rgba(255,255,255,0.88)',
     fontSize: 14,
+    lineHeight: 20,
   },
 });

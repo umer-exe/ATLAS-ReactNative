@@ -1,0 +1,424 @@
+ATLAS TOURS PROJECT HIERARCHY AND FLOW
+
+Purpose
+This file explains how the current React Native app is organized, how navigation is layered, how state moves through the app, and which functions/hooks are doing the important work.
+
+
+1. HIGH-LEVEL PROJECT STRUCTURE
+
+Root level
+- App.jsx
+  Main app wrapper. It connects Redux, Context, and navigation.
+- index.js
+  Entry file kept as the Expo default entry point.
+- package.json
+  Project dependencies and scripts.
+- assets/
+  App images and static visual assets.
+- docs/
+  Project documentation, task tracking, screenshots, and reference material.
+- src/
+  Main application code.
+
+src/
+- components/
+  Reusable presentation pieces such as cards, buttons, inputs, badges, and feature-specific UI.
+- context/
+  Simple shared state using Context API.
+- data/
+  Static frontend data used by screens.
+- navigation/
+  Drawer, tabs, and stack navigators.
+- screens/
+  Full customer-facing screens.
+- store/
+  Redux state management for the booking flow.
+- styles/
+  Shared colors and spacing tokens.
+
+
+2. HOW THE APP STARTS
+
+The app starts from:
+- index.js -> App.jsx
+
+App.jsx does three important things:
+1. Wraps the app in Redux Provider
+   This makes the Redux store available to any screen or component that uses useSelector or useDispatch.
+2. Wraps the app in ThemeProvider
+   This makes shared app-level values available through useTheme.
+3. Renders RootNavigator
+   This starts the full navigation tree.
+
+Flow:
+index.js
+  -> App.jsx
+     -> Provider(store)
+        -> ThemeProvider
+           -> RootNavigator
+
+
+3. NAVIGATION HIERARCHY
+
+Navigation is intentionally layered to show multiple course concepts:
+- one NavigationContainer
+- one Drawer navigator
+- one Bottom Tab navigator
+- multiple Stack navigators
+
+Hierarchy:
+RootNavigator
+  -> NavigationContainer
+     -> DrawerNavigator
+        -> MainTabs
+           -> HomeStackNavigator
+              -> HomeScreen
+              -> TourDetailScreen
+           -> ToursStackNavigator
+              -> ToursScreen
+              -> TourDetailScreen
+           -> ContactScreen
+        -> CartStackNavigator
+           -> CartScreen
+           -> OrderConfirmationScreen
+
+What each file does
+
+src/navigation/RootNavigator.jsx
+- Uses NavigationContainer once.
+- Mounts DrawerNavigator.
+- This is the top of the navigation tree.
+
+src/navigation/DrawerNavigator.jsx
+- Creates the side drawer menu.
+- Defines two main drawer destinations:
+  - MainTabs
+  - CartStack
+- Uses AtlasDrawerContent to give custom drawer items for Home, Tours, Contact, and Cart.
+
+src/navigation/TabNavigator.jsx
+- Creates the bottom tab bar.
+- Tabs:
+  - Home
+  - Tours
+  - Contact
+- Home and Tours are stack navigators, not plain screens.
+- Contact is currently a direct screen.
+
+src/navigation/HomeStackNavigator.jsx
+- Handles the Home tab flow.
+- Starts on HomeScreen.
+- Can push TourDetailScreen.
+
+src/navigation/ToursStackNavigator.jsx
+- Handles the Tours tab flow.
+- Starts on ToursScreen.
+- Can push TourDetailScreen.
+
+src/navigation/CartStackNavigator.jsx
+- Handles cart and booking confirmation.
+- Starts on CartScreen.
+- Can push OrderConfirmationScreen.
+
+Why this structure matters
+- The drawer gives app-level movement.
+- The tabs cover the main customer sections.
+- The stacks handle detail/step-by-step flows without cluttering the tabs.
+
+
+4. SCREEN-TO-SCREEN FLOW
+
+Main customer path
+1. User lands on HomeScreen
+2. User can move to ToursScreen or TourDetailScreen
+3. User selects a tour in TourDetailScreen
+4. User adds it to cart
+5. User completes customer details in CartScreen
+6. User confirms booking
+7. User sees final details in OrderConfirmationScreen
+
+Other paths
+- ContactScreen can be opened from the Contact tab
+- ContactScreen can also send the user back to Home, Tours, or Cart using quick-link buttons
+
+
+5. STATE MANAGEMENT OVERVIEW
+
+The app uses two kinds of shared state:
+
+A. Context API
+Used for simple shared app-level values.
+
+File:
+- src/context/ThemeContext.jsx
+
+Current values stored there:
+- brandName
+- supportPhone
+- supportEmail
+- footerLinks
+
+Why Context is used here
+- These values are small
+- They are read in multiple screens
+- They do not need Redux complexity
+
+Used by:
+- HomeScreen
+- ContactScreen
+
+Key pieces:
+- createContext(...)
+  creates the context
+- ThemeProvider
+  wraps children with shared values
+- useTheme()
+  custom hook that returns useContext(ThemeContext)
+
+
+B. Redux Toolkit
+Used for booking/cart flow state.
+
+Files:
+- src/store/store.js
+- src/store/cartSlice.js
+
+Why Redux is used here
+- Booking state moves across multiple screens
+- The selected tour, quantity, and checkout details need to survive navigation changes
+- Cart and confirmation screens both depend on the same booking data
+
+Store shape
+state.cart contains:
+- selectedTourSlug
+- departureDate
+- quantity
+- addedToCart
+- customerInfo
+  - firstName
+  - lastName
+  - email
+  - phone
+  - address
+  - city
+  - country
+- paymentMethod
+
+Reducers in cartSlice.js
+- setCartSelection(state, action)
+  Saves the chosen tour slug, departure date, quantity, and marks the tour as added to cart.
+
+- updateQuantity(state, action)
+  Updates traveler count, but never lets it go below 1.
+
+- setCheckoutDetails(state, action)
+  Saves the customer info and payment method, then clears the "added to cart" success state.
+
+
+6. HOW STATE FLOWS THROUGH THE BOOKING PROCESS
+
+Step 1: TourDetailScreen
+- Finds the selected tour from static data using route params
+- Reads local form values:
+  - departureDate
+  - travelers
+- On "Add to Cart", dispatches:
+  - setCartSelection(...)
+
+Important hook/function use:
+- useDispatch()
+  gets the Redux dispatch function
+- addToCart()
+  sends the selected booking data into Redux and navigates to CartStack
+
+Result:
+- Redux now holds the selected tour slug, chosen date, and quantity
+
+
+Step 2: CartScreen
+- Reads the full cart slice from Redux using useSelector
+- Matches selectedTourSlug against toursData to rebuild the full selected tour object
+- Initializes form fields from any existing customerInfo in Redux
+- Lets the user change traveler quantity
+- Validates required fields before booking confirmation
+
+Important hook/function use:
+- useSelector((state) => state.cart)
+  reads booking state
+- useDispatch()
+  dispatches quantity and checkout actions
+- confirmBooking()
+  validates required fields, stores customer info and payment method, then navigates to OrderConfirmation
+- Alert.alert(...)
+  shows validation feedback if required fields are missing
+
+Actions used here:
+- updateQuantity(...)
+- setCheckoutDetails(...)
+
+
+Step 3: OrderConfirmationScreen
+- Reads the final cart slice from Redux with useSelector
+- Resolves the selected tour again from toursData using selectedTourSlug
+- Builds derived display values such as:
+  - customerName
+  - fullAddress
+  - totalAmount
+
+Important hook/function use:
+- useSelector((state) => state.cart)
+  reads confirmed booking data
+
+Result:
+- The confirmation screen reflects what the user selected in Tour Detail and Cart
+
+
+7. LOCAL STATE VS SHARED STATE
+
+Local state is still used where it makes sense.
+
+Examples:
+- ToursScreen uses useState for filters:
+  - selectedType
+  - destinationQuery
+  - minPrice
+  - maxPrice
+  - appliedFilters
+
+- ContactScreen uses useState for form inputs
+- TourDetailScreen uses useState for date and traveler count before dispatching to Redux
+- CartScreen uses useState for customer form fields before saving them into Redux
+
+Reason:
+- Not every piece of state needs to be global
+- Local state keeps each screen simpler until data must be shared across screens
+
+
+8. STATIC DATA CONNECTION
+
+File:
+- src/data/toursData.js
+
+This file acts as the main frontend dataset for tours.
+It is used by:
+- HomeScreen
+- ToursScreen
+- TourDetailScreen
+- CartScreen
+- OrderConfirmationScreen
+
+How it connects
+- ToursScreen lists tours from toursData
+- TourDetailScreen finds one selected tour from toursData
+- CartScreen and OrderConfirmationScreen rebuild the selected tour using the Redux slug and toursData
+
+This is important:
+- Redux stores only the slug and booking details
+- The full tour object is looked up from static data when needed
+- That keeps the Redux store smaller and easier to reason about
+
+
+9. REUSABLE UI COMPONENT CONNECTION
+
+Shared UI components live in:
+- src/components/ui/
+
+Main role
+- keep screens visually consistent
+- reduce repeated layout and styling code
+
+Examples
+- AppScreen
+  shared outer screen wrapper
+- AppCard
+  shared card surface
+- AppButton
+  shared button styles and variants
+- AppInput
+  shared text input field
+- AppBadge
+  shared small label/chip
+- SectionTitle
+  shared section heading block
+
+Feature components
+- TourCard
+  used in tour listings and featured sections
+- DestinationCard
+  used in the home destination section
+- TestimonialCard
+  used in the home testimonial section
+- FAQItem
+  used in the contact FAQ section
+
+
+10. MOST IMPORTANT HOOKS AND FUNCTIONS IN THIS PROJECT
+
+React hooks
+- useState
+  local state for forms, filters, and temporary inputs
+- useContext
+  used inside useTheme to access simple shared values
+
+Redux hooks
+- useDispatch
+  sends updates into Redux
+- useSelector
+  reads state back from Redux
+
+Navigation-related functions
+- navigation.navigate(...)
+  move to another screen in the current navigator
+- navigation.getParent()?.navigate(...)
+  reach a parent navigator when the target screen is outside the current stack/tab layer
+- navigation.getParent()?.getParent()?.navigate(...)
+  currently used in TourDetailScreen to jump from nested stack to the drawer-level CartStack
+
+Project-specific functions
+- addToCart()
+  TourDetailScreen handler that dispatches selected booking details
+- applyFilters()
+  ToursScreen handler that saves the current filter choices
+- confirmBooking()
+  CartScreen handler that validates inputs, dispatches checkout details, and navigates forward
+- handleSubmit()
+  ContactScreen handler that validates the contact form and shows a simple success alert
+- buildItinerary(tour)
+  helper in TourDetailScreen that builds a simple day-by-day layout from tour highlights
+
+
+11. CURRENT LIMITATIONS TO KEEP IN MIND
+
+- Navigation works, but some cross-navigator jumps rely on getParent() chains.
+  This is acceptable for the current course project, but it could be cleaned up later with a more centralized navigation pattern.
+
+- Redux only covers the booking flow.
+  That is intentional and matches the project scope.
+
+- ThemeContext currently stores shared content values more than visual theme tokens.
+  Colors and spacing still live in src/styles/.
+
+- Tour images are still placeholders in parts of the app.
+  The structure is ready, but the real local image asset pass is still incomplete.
+
+- The app is frontend only.
+  No real API, payment, authentication, or database work is connected.
+
+
+12. QUICK MENTAL MODEL
+
+If someone new joins the project, the easiest way to think about it is:
+
+- App.jsx wires together the whole app
+- navigation/ decides where the user can go
+- screens/ renders each major page
+- components/ keeps the UI reusable
+- data/ holds static content
+- context/ shares simple global values
+- store/ shares booking state across screens
+- styles/ keeps colors and spacing consistent
+
+For the booking path specifically:
+- TourDetail writes booking selection into Redux
+- Cart edits and completes booking details
+- OrderConfirmation reads the final result

@@ -5,6 +5,7 @@ import AppBadge from '../components/ui/AppBadge';
 import AppCard from '../components/ui/AppCard';
 import AppScreen from '../components/ui/AppScreen';
 import SectionTitle from '../components/ui/SectionTitle';
+import { useTheme } from '../context/ThemeContext';
 import { toursData } from '../data/toursData';
 import colors from '../styles/colors';
 import spacing from '../styles/spacing';
@@ -12,6 +13,7 @@ import spacing from '../styles/spacing';
 const defaultTour = toursData[1];
 
 export default function OrderConfirmationScreen() {
+  const { brandName, footerLinks, supportPhone } = useTheme();
   const cart = useSelector((state) => state.cart);
   const selectedTour =
     toursData.find((item) => item.slug === cart.selectedTourSlug) ?? defaultTour;
@@ -25,7 +27,7 @@ export default function OrderConfirmationScreen() {
     <AppScreen scrollable>
       <View style={styles.container}>
         <View style={styles.topBar}>
-          <Text style={styles.logo}>Atlas Tours</Text>
+          <Text style={styles.logo}>{brandName}</Text>
           <Text style={styles.topHint}>Confirmation</Text>
         </View>
 
@@ -69,10 +71,10 @@ export default function OrderConfirmationScreen() {
             </View>
           </View>
 
-          <AppCard style={styles.totalCard}>
+          <View style={styles.totalCard}>
             <Text style={styles.totalLabel}>Total Amount</Text>
             <Text style={styles.totalValue}>{totalAmount}</Text>
-          </AppCard>
+          </View>
 
           <SectionTitle
             eyebrow="What's Next"
@@ -87,10 +89,10 @@ export default function OrderConfirmationScreen() {
         </AppCard>
 
         <View style={styles.footer}>
-          <Text style={styles.footerLogo}>Atlas Tours</Text>
+          <Text style={styles.footerLogo}>{brandName}</Text>
           <Text style={styles.footerText}>Thank you for choosing Atlas Tours for your next journey.</Text>
-          <Text style={styles.footerLinks}>Home  |  Tours  |  Contact  |  Cart</Text>
-          <Text style={styles.footerText}>Phone: +92 300 1234567</Text>
+          <Text style={styles.footerLinks}>{footerLinks}</Text>
+          <Text style={styles.footerText}>Phone: {supportPhone}</Text>
         </View>
       </View>
     </AppScreen>
@@ -146,6 +148,7 @@ const styles = StyleSheet.create({
   },
   tourRow: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
     alignItems: 'center',
     gap: spacing.md,
   },
@@ -166,6 +169,7 @@ const styles = StyleSheet.create({
   },
   tourCopy: {
     flex: 1,
+    minWidth: 180,
     gap: spacing.xs,
   },
   tourMeta: {
@@ -175,6 +179,9 @@ const styles = StyleSheet.create({
   totalCard: {
     backgroundColor: colors.primaryLight,
     borderColor: colors.primaryLight,
+    borderWidth: 1,
+    borderRadius: 16,
+    padding: spacing.lg,
     gap: spacing.xs,
   },
   totalLabel: {

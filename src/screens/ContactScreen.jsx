@@ -39,7 +39,7 @@ export default function ContactScreen({ navigation }) {
 
         <AppCard style={styles.heroCard}>
           <Text style={styles.heroTitle}>Get In Touch</Text>
-          <Text style={styles.heroSubtitle}>We&apos;re here to help plan your perfect journey.</Text>
+          <Text style={styles.heroSubtitle}>We're here to help plan your perfect journey.</Text>
         </AppCard>
 
         <AppCard style={styles.formCard}>
@@ -48,15 +48,31 @@ export default function ContactScreen({ navigation }) {
             subtitle="A simple mobile form inspired by the website contact page."
             title="Tell us about your trip"
           />
-          <AppInput label="Full Name" onChangeText={setFullName} placeholder="Your full name" value={fullName} />
-          <AppInput label="Email Address" onChangeText={setEmail} placeholder="name@example.com" value={email} />
-          <AppInput label="Phone Number" onChangeText={setPhone} placeholder={supportPhone} value={phone} />
+          <AppInput label="Full Name" onChangeText={setFullName} placeholder="Your full name" returnKeyType="next" value={fullName} />
+          <AppInput
+            autoCapitalize="none"
+            keyboardType="email-address"
+            label="Email Address"
+            onChangeText={setEmail}
+            placeholder="name@example.com"
+            returnKeyType="next"
+            value={email}
+          />
+          <AppInput
+            keyboardType="phone-pad"
+            label="Phone Number"
+            onChangeText={setPhone}
+            placeholder={supportPhone}
+            returnKeyType="next"
+            value={phone}
+          />
           <AppInput label="Subject" onChangeText={setSubject} placeholder="Tour planning, pricing, or support" value={subject} />
           <AppInput
             label="Message"
             multiline
             onChangeText={setMessage}
             placeholder="Share your destination, travel dates, or any questions you have."
+            returnKeyType="done"
             value={message}
           />
           <AppButton label="Send Message" onPress={handleSubmit} />
@@ -111,7 +127,7 @@ export default function ContactScreen({ navigation }) {
             <AppButton label="Browse Tours" onPress={() => navigation.navigate('Tours')} style={styles.fullWidth} variant="secondary" />
             <AppButton
               label="View Cart"
-              onPress={() => navigation.getParent()?.navigate('CartStack')}
+              onPress={() => navigation.getParent()?.getParent()?.navigate('CartStack')}
               style={styles.fullWidth}
               variant="secondary"
             />

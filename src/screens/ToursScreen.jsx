@@ -7,6 +7,7 @@ import AppButton from '../components/ui/AppButton';
 import AppCard from '../components/ui/AppCard';
 import AppInput from '../components/ui/AppInput';
 import AppScreen from '../components/ui/AppScreen';
+import { useTheme } from '../context/ThemeContext';
 import { toursData } from '../data/toursData';
 import colors from '../styles/colors';
 import spacing from '../styles/spacing';
@@ -14,6 +15,7 @@ import spacing from '../styles/spacing';
 const FILTER_OPTIONS = ['all', 'international', 'domestic'];
 
 export default function ToursScreen({ navigation }) {
+  const { brandName, footerLinks } = useTheme();
   const [selectedType, setSelectedType] = useState('all');
   const [destinationQuery, setDestinationQuery] = useState('');
   const [minPrice, setMinPrice] = useState('');
@@ -49,10 +51,14 @@ export default function ToursScreen({ navigation }) {
     });
   };
 
+  const openCart = () => {
+    navigation.getParent()?.getParent()?.navigate('CartStack');
+  };
+
   const renderHeader = () => (
     <View style={styles.headerContent}>
       <View style={styles.topBar}>
-        <Text style={styles.logo}>Atlas Tours</Text>
+        <Text style={styles.logo}>{brandName}</Text>
         <AppBadge label="Tours" />
       </View>
 
@@ -90,6 +96,7 @@ export default function ToursScreen({ navigation }) {
         <View style={styles.priceRow}>
           <View style={styles.priceInput}>
             <AppInput
+              keyboardType="numeric"
               label="Min Price"
               onChangeText={setMinPrice}
               placeholder="0"
@@ -98,6 +105,7 @@ export default function ToursScreen({ navigation }) {
           </View>
           <View style={styles.priceInput}>
             <AppInput
+              keyboardType="numeric"
               label="Max Price"
               onChangeText={setMaxPrice}
               placeholder="20000"
@@ -127,7 +135,7 @@ export default function ToursScreen({ navigation }) {
           <AppButton label="Contact Us" onPress={() => navigation.navigate('Contact')} style={styles.fullWidth} />
           <AppButton
             label="Open Cart"
-            onPress={() => navigation.getParent()?.navigate('CartStack')}
+            onPress={openCart}
             style={styles.fullWidth}
             variant="secondary"
           />
@@ -135,9 +143,9 @@ export default function ToursScreen({ navigation }) {
       </AppCard>
 
       <View style={styles.footer}>
-        <Text style={styles.footerLogo}>Atlas Tours</Text>
+        <Text style={styles.footerLogo}>{brandName}</Text>
         <Text style={styles.footerText}>Browse by destination, compare packages, and plan your next trip with confidence.</Text>
-        <Text style={styles.footerLinks}>Home  •  Tours  •  Contact  •  Cart</Text>
+        <Text style={styles.footerLinks}>{footerLinks}</Text>
       </View>
     </View>
   );
@@ -227,6 +235,7 @@ const styles = StyleSheet.create({
   },
   priceInput: {
     flex: 1,
+    minWidth: 0,
   },
   resultsRow: {
     flexDirection: 'row',

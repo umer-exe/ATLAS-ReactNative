@@ -8,6 +8,7 @@ import AppCard from '../components/ui/AppCard';
 import AppInput from '../components/ui/AppInput';
 import AppScreen from '../components/ui/AppScreen';
 import SectionTitle from '../components/ui/SectionTitle';
+import { useTheme } from '../context/ThemeContext';
 import { setCartSelection } from '../store/cartSlice';
 import { toursData } from '../data/toursData';
 import colors from '../styles/colors';
@@ -23,6 +24,7 @@ const buildItinerary = (tour) =>
 
 export default function TourDetailScreen({ navigation, route }) {
   const dispatch = useDispatch();
+  const { brandName, footerLinks, supportPhone } = useTheme();
   const routeTitle = route.params?.tourTitle;
   const tour =
     toursData.find((item) => item.title === routeTitle) ??
@@ -50,7 +52,7 @@ export default function TourDetailScreen({ navigation, route }) {
     <AppScreen scrollable>
       <View style={styles.container}>
         <View style={styles.topBar}>
-          <Text style={styles.logo}>Atlas Tours</Text>
+          <Text style={styles.logo}>{brandName}</Text>
           <AppBadge label="Tour Detail" />
         </View>
 
@@ -105,6 +107,7 @@ export default function TourDetailScreen({ navigation, route }) {
           />
           <AppInput
             label="Number of Travelers"
+            keyboardType="numeric"
             onChangeText={setTravelers}
             placeholder="2"
             value={travelers}
@@ -112,7 +115,7 @@ export default function TourDetailScreen({ navigation, route }) {
           <AppButton label="Add to Cart" onPress={addToCart} />
           <View style={styles.helpBox}>
             <Text style={styles.helpTitle}>Need Help?</Text>
-            <Text style={styles.helpText}>Phone: +92 300 1234567</Text>
+            <Text style={styles.helpText}>Phone: {supportPhone}</Text>
             <Text style={styles.helpText}>WhatsApp support available during office hours</Text>
           </View>
         </AppCard>
@@ -151,9 +154,9 @@ export default function TourDetailScreen({ navigation, route }) {
         </AppCard>
 
         <View style={styles.footer}>
-          <Text style={styles.footerLogo}>Atlas Tours</Text>
+          <Text style={styles.footerLogo}>{brandName}</Text>
           <Text style={styles.footerText}>Trusted travel planning for domestic and international journeys.</Text>
-          <Text style={styles.footerLinks}>Home  |  Tours  |  Contact  |  Cart</Text>
+          <Text style={styles.footerLinks}>{footerLinks}</Text>
         </View>
       </View>
     </AppScreen>

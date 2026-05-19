@@ -9,7 +9,7 @@ import AppCard from '../ui/AppCard';
 export default function TourCard({ tour, onPress }) {
   return (
     <AppCard style={styles.card}>
-      <Pressable onPress={onPress} style={styles.content}>
+      <Pressable accessibilityRole="button" onPress={onPress} style={styles.content}>
         <View style={styles.imagePlaceholder}>
           <Text style={styles.imageText}>{tour.images.imageName}</Text>
         </View>
@@ -19,17 +19,18 @@ export default function TourCard({ tour, onPress }) {
           <Text style={styles.meta}>{tour.location}</Text>
           <Text style={styles.meta}>{tour.duration}</Text>
         </View>
-        <View style={styles.footer}>
-          <Text style={styles.price}>{tour.formattedPrice}</Text>
-          <AppButton label="View Details" onPress={onPress} style={styles.button} />
-        </View>
       </Pressable>
+      <View style={styles.footer}>
+        <Text style={styles.price}>{tour.formattedPrice}</Text>
+        <AppButton label="View Details" onPress={onPress} style={styles.button} />
+      </View>
     </AppCard>
   );
 }
 
 const styles = StyleSheet.create({
   card: {
+    gap: spacing.md,
     padding: spacing.md,
   },
   content: {
@@ -56,10 +57,12 @@ const styles = StyleSheet.create({
     color: colors.text,
     fontSize: 20,
     fontWeight: '800',
+    lineHeight: 27,
   },
   meta: {
     color: colors.textMuted,
     fontSize: 14,
+    lineHeight: 20,
   },
   footer: {
     gap: spacing.sm,

@@ -54,16 +54,19 @@ const styles = StyleSheet.create({
     fontWeight: '800',
   },
   meta: {
+    flex: 1,
     gap: 2,
   },
   name: {
     color: colors.text,
     fontSize: 16,
     fontWeight: '700',
+    lineHeight: 22,
   },
   location: {
     color: colors.textMuted,
     fontSize: 13,
+    lineHeight: 18,
   },
   stars: {
     color: colors.accent,

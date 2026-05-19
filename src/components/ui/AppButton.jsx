@@ -8,8 +8,14 @@ export default function AppButton({ label, onPress, variant = 'primary', style, 
   const labelStyle = variant === 'secondary' ? styles.secondaryLabel : styles.primaryLabel;
 
   return (
-    <Pressable style={({ pressed }) => [styles.baseButton, buttonStyle, pressed && styles.pressed, style]} onPress={onPress}>
-      <Text style={[styles.baseLabel, labelStyle, textStyle]}>{label}</Text>
+    <Pressable
+      accessibilityRole="button"
+      onPress={onPress}
+      style={({ pressed }) => [styles.baseButton, buttonStyle, pressed && styles.pressed, style]}
+    >
+      <Text numberOfLines={2} style={[styles.baseLabel, labelStyle, textStyle]}>
+        {label}
+      </Text>
     </Pressable>
   );
 }
@@ -36,6 +42,8 @@ const styles = StyleSheet.create({
   baseLabel: {
     fontSize: 15,
     fontWeight: '700',
+    lineHeight: 20,
+    textAlign: 'center',
   },
   primaryLabel: {
     color: colors.surface,

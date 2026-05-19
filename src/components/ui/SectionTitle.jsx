@@ -33,8 +33,9 @@ const styles = StyleSheet.create({
   },
   title: {
     color: colors.text,
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: '800',
+    lineHeight: 30,
   },
   subtitle: {
     color: colors.textMuted,

@@ -21,6 +21,7 @@ const styles = StyleSheet.create({
     color: colors.text,
     fontSize: 17,
     fontWeight: '700',
+    lineHeight: 24,
   },
   answer: {
     color: colors.textMuted,
