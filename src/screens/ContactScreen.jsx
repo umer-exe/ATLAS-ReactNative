@@ -5,6 +5,7 @@ import FAQItem from '../components/contact/FAQItem';
 import AppButton from '../components/ui/AppButton';
 import AppCard from '../components/ui/AppCard';
 import AppInput from '../components/ui/AppInput';
+import AppFooter from '../components/ui/AppFooter';
 import AppScreen from '../components/ui/AppScreen';
 import ScreenHeader from '../components/ui/ScreenHeader';
 import ScreenHero from '../components/ui/ScreenHero';
@@ -15,7 +16,7 @@ import colors from '../styles/colors';
 import spacing from '../styles/spacing';
 
 export default function ContactScreen({ navigation }) {
-  const { brandName, supportEmail, supportPhone, footerLinks } = useTheme();
+  const { brandName, supportEmail, supportPhone } = useTheme();
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
@@ -142,11 +143,7 @@ export default function ContactScreen({ navigation }) {
           ))}
         </View>
 
-        <View style={styles.footer}>
-          <Text style={styles.footerLogo}>{brandName}</Text>
-          <Text style={styles.footerText}>Travel planning support for tours, pricing, and tailored itineraries.</Text>
-          <Text style={styles.footerLinks}>{footerLinks}</Text>
-        </View>
+        <AppFooter />
       </View>
     </AppScreen>
   );
@@ -199,26 +196,5 @@ const styles = StyleSheet.create({
   },
   faqStack: {
     gap: spacing.md,
-  },
-  footer: {
-    borderRadius: 18,
-    backgroundColor: colors.navy,
-    padding: spacing.xl,
-    gap: spacing.sm,
-  },
-  footerLogo: {
-    color: colors.textLight,
-    fontSize: 22,
-    fontWeight: '800',
-  },
-  footerText: {
-    color: 'rgba(255,255,255,0.8)',
-    fontSize: 14,
-    lineHeight: 21,
-  },
-  footerLinks: {
-    color: colors.textLight,
-    fontSize: 14,
-    fontWeight: '600',
   },
 });

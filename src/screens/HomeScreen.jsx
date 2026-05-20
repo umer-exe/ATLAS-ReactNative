@@ -5,6 +5,7 @@ import DestinationCard from '../components/tours/DestinationCard';
 import TourCard from '../components/tours/TourCard';
 import AppButton from '../components/ui/AppButton';
 import AppCard from '../components/ui/AppCard';
+import AppFooter from '../components/ui/AppFooter';
 import AppScreen from '../components/ui/AppScreen';
 import ScreenHeader from '../components/ui/ScreenHeader';
 import ScreenHero from '../components/ui/ScreenHero';
@@ -16,7 +17,7 @@ import colors from '../styles/colors';
 import spacing from '../styles/spacing';
 
 export default function HomeScreen({ navigation }) {
-  const { brandName, supportEmail, supportPhone, footerLinks } = useTheme();
+  const { brandName } = useTheme();
 
   return (
     <AppScreen scrollable>
@@ -99,13 +100,7 @@ export default function HomeScreen({ navigation }) {
           </View>
         </AppCard>
 
-        <View style={styles.footer}>
-          <Text style={styles.footerLogo}>{brandName}</Text>
-          <Text style={styles.footerText}>Explore trusted domestic and international travel experiences.</Text>
-          <Text style={styles.footerLinks}>{footerLinks}</Text>
-          <Text style={styles.footerText}>Phone: {supportPhone}</Text>
-          <Text style={styles.footerText}>Email: {supportEmail}</Text>
-        </View>
+        <AppFooter />
       </View>
     </AppScreen>
   );
@@ -165,26 +160,5 @@ const styles = StyleSheet.create({
   },
   ctaActions: {
     gap: spacing.sm,
-  },
-  footer: {
-    backgroundColor: colors.navy,
-    borderRadius: 18,
-    padding: spacing.xl,
-    gap: spacing.sm,
-  },
-  footerLogo: {
-    color: colors.textLight,
-    fontSize: 22,
-    fontWeight: '800',
-  },
-  footerText: {
-    color: 'rgba(255,255,255,0.8)',
-    fontSize: 14,
-    lineHeight: 21,
-  },
-  footerLinks: {
-    color: colors.textLight,
-    fontSize: 14,
-    fontWeight: '600',
   },
 });

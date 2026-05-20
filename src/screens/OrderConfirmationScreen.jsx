@@ -15,7 +15,7 @@ import spacing from '../styles/spacing';
 const defaultTour = toursData[1];
 
 export default function OrderConfirmationScreen({ navigation }) {
-  const { brandName, footerLinks, supportPhone } = useTheme();
+  const { brandName } = useTheme();
   const cart = useSelector((state) => state.cart);
   const selectedTour =
     toursData.find((item) => item.slug === cart.selectedTourSlug) ?? defaultTour;
@@ -100,12 +100,6 @@ export default function OrderConfirmationScreen({ navigation }) {
           </View>
         </AppCard>
 
-        <View style={styles.footer}>
-          <Text style={styles.footerLogo}>{brandName}</Text>
-          <Text style={styles.footerText}>Thank you for choosing Atlas Tours for your next journey.</Text>
-          <Text style={styles.footerLinks}>{footerLinks}</Text>
-          <Text style={styles.footerText}>Phone: {supportPhone}</Text>
-        </View>
       </View>
     </AppScreen>
   );
@@ -202,26 +196,5 @@ const styles = StyleSheet.create({
   },
   actionButtons: {
     gap: spacing.sm,
-  },
-  footer: {
-    borderRadius: 18,
-    backgroundColor: colors.navy,
-    padding: spacing.xl,
-    gap: spacing.sm,
-  },
-  footerLogo: {
-    color: colors.textLight,
-    fontSize: 22,
-    fontWeight: '800',
-  },
-  footerText: {
-    color: 'rgba(255,255,255,0.8)',
-    fontSize: 14,
-    lineHeight: 21,
-  },
-  footerLinks: {
-    color: colors.textLight,
-    fontSize: 14,
-    fontWeight: '600',
   },
 });

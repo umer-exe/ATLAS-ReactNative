@@ -24,7 +24,7 @@ const buildItinerary = (tour) =>
 
 export default function TourDetailScreen({ navigation, route }) {
   const dispatch = useDispatch();
-  const { brandName, footerLinks, supportPhone } = useTheme();
+  const { supportPhone } = useTheme();
   const routeTitle = route.params?.tourTitle;
   const tour =
     toursData.find((item) => item.title === routeTitle) ??
@@ -148,11 +148,6 @@ export default function TourDetailScreen({ navigation, route }) {
           </View>
         </AppCard>
 
-        <View style={styles.footer}>
-          <Text style={styles.footerLogo}>{brandName}</Text>
-          <Text style={styles.footerText}>Trusted travel planning for domestic and international journeys.</Text>
-          <Text style={styles.footerLinks}>{footerLinks}</Text>
-        </View>
       </View>
     </AppScreen>
   );
@@ -283,26 +278,5 @@ const styles = StyleSheet.create({
     color: colors.textSoft,
     fontSize: 15,
     lineHeight: 22,
-  },
-  footer: {
-    borderRadius: 18,
-    backgroundColor: colors.navy,
-    padding: spacing.xl,
-    gap: spacing.sm,
-  },
-  footerLogo: {
-    color: colors.textLight,
-    fontSize: 22,
-    fontWeight: '800',
-  },
-  footerText: {
-    color: 'rgba(255,255,255,0.8)',
-    fontSize: 14,
-    lineHeight: 21,
-  },
-  footerLinks: {
-    color: colors.textLight,
-    fontSize: 14,
-    fontWeight: '600',
   },
 });

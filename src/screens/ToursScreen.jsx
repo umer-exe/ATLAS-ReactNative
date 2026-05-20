@@ -4,6 +4,7 @@ import { FlatList, StyleSheet, Text, View } from 'react-native';
 import TourCard from '../components/tours/TourCard';
 import AppButton from '../components/ui/AppButton';
 import AppCard from '../components/ui/AppCard';
+import AppFooter from '../components/ui/AppFooter';
 import AppInput from '../components/ui/AppInput';
 import AppScreen from '../components/ui/AppScreen';
 import ScreenHeader from '../components/ui/ScreenHeader';
@@ -16,7 +17,7 @@ import spacing from '../styles/spacing';
 const FILTER_OPTIONS = ['all', 'international', 'domestic'];
 
 export default function ToursScreen({ navigation }) {
-  const { brandName, footerLinks } = useTheme();
+  const { brandName } = useTheme();
   const [selectedType, setSelectedType] = useState('all');
   const [destinationQuery, setDestinationQuery] = useState('');
   const [minPrice, setMinPrice] = useState('');
@@ -137,11 +138,7 @@ export default function ToursScreen({ navigation }) {
         </View>
       </AppCard>
 
-      <View style={styles.footer}>
-        <Text style={styles.footerLogo}>{brandName}</Text>
-        <Text style={styles.footerText}>Browse by destination, compare packages, and plan your next trip with confidence.</Text>
-        <Text style={styles.footerLinks}>{footerLinks}</Text>
-      </View>
+      <AppFooter />
     </View>
   );
 
@@ -260,26 +257,5 @@ const styles = StyleSheet.create({
   },
   fullWidth: {
     width: '100%',
-  },
-  footer: {
-    borderRadius: 18,
-    backgroundColor: colors.navy,
-    padding: spacing.xl,
-    gap: spacing.sm,
-  },
-  footerLogo: {
-    color: colors.textLight,
-    fontSize: 22,
-    fontWeight: '800',
-  },
-  footerText: {
-    color: 'rgba(255,255,255,0.8)',
-    fontSize: 14,
-    lineHeight: 21,
-  },
-  footerLinks: {
-    color: colors.textLight,
-    fontSize: 14,
-    fontWeight: '600',
   },
 });
