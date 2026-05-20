@@ -103,35 +103,6 @@ export default function ContactScreen({ navigation }) {
           </View>
         </AppCard>
 
-        <AppCard style={styles.purpleCard}>
-          <SectionTitle
-            eyebrow="Our Location"
-            subtitle="The web app uses a stronger purple block here, so the mobile version keeps that contrast."
-            title="Visit the main office"
-            tone="inverse"
-          />
-          <Text style={styles.purpleText}>Lahore office serving domestic and international bookings across Pakistan.</Text>
-        </AppCard>
-
-        <AppCard style={styles.quickLinksCard}>
-          <SectionTitle
-            eyebrow="Quick Links"
-            subtitle="Fast access to the main customer screens."
-            title="Where to go next"
-            tone="inverse"
-          />
-          <View style={styles.quickLinks}>
-            <AppButton label="Browse Tours" onPress={() => navigation.navigate('Tours')} style={styles.fullWidth} variant="secondary" />
-            <AppButton
-              label="View Cart"
-              onPress={() => navigation.getParent()?.getParent()?.navigate('CartStack')}
-              style={styles.fullWidth}
-              variant="secondary"
-            />
-            <AppButton label="Explore Home" onPress={() => navigation.navigate('Home')} style={styles.fullWidth} variant="secondary" />
-          </View>
-        </AppCard>
-
         <SectionTitle
           eyebrow="Frequently Asked Questions"
           subtitle="FAQ cards follow the simple stacked style from the design notes."
@@ -172,27 +143,6 @@ const styles = StyleSheet.create({
     color: colors.textSoft,
     fontSize: 15,
     lineHeight: 22,
-  },
-  purpleCard: {
-    backgroundColor: colors.primaryDark,
-    borderColor: colors.primaryDark,
-    gap: spacing.md,
-  },
-  purpleText: {
-    color: 'rgba(255,255,255,0.92)',
-    fontSize: 15,
-    lineHeight: 22,
-  },
-  quickLinksCard: {
-    backgroundColor: colors.primary,
-    borderColor: colors.primary,
-    gap: spacing.md,
-  },
-  quickLinks: {
-    gap: spacing.sm,
-  },
-  fullWidth: {
-    width: '100%',
   },
   faqStack: {
     gap: spacing.md,

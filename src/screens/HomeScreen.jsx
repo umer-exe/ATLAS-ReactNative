@@ -48,7 +48,6 @@ export default function HomeScreen({ navigation }) {
           {featuredTours.slice(0, 3).map((tour) => (
             <TourCard
               key={tour.id}
-              compact
               onPress={() => navigation.navigate('TourDetail', { tourTitle: tour.title })}
               tour={tour}
             />

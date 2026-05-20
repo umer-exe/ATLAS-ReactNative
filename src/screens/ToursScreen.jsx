@@ -121,23 +121,6 @@ export default function ToursScreen({ navigation }) {
 
   const renderFooter = () => (
     <View style={styles.footerStack}>
-      <AppCard style={styles.ctaCard}>
-        <Text style={styles.ctaEyebrow}>Need Help Choosing?</Text>
-        <Text style={styles.ctaTitle}>Talk to Atlas Tours before you book.</Text>
-        <Text style={styles.ctaText}>
-          Compare packages, ask about custom plans, and get guidance for the destination that fits your budget.
-        </Text>
-        <View style={styles.ctaActions}>
-          <AppButton label="Contact Us" onPress={() => navigation.navigate('Contact')} style={styles.fullWidth} />
-          <AppButton
-            label="Open Cart"
-            onPress={openCart}
-            style={styles.fullWidth}
-            variant="secondary"
-          />
-        </View>
-      </AppCard>
-
       <AppFooter />
     </View>
   );
@@ -229,31 +212,6 @@ const styles = StyleSheet.create({
   footerStack: {
     gap: spacing.lg,
     marginTop: spacing.lg,
-  },
-  ctaCard: {
-    backgroundColor: colors.primary,
-    borderColor: colors.primary,
-    gap: spacing.md,
-  },
-  ctaEyebrow: {
-    color: 'rgba(255,255,255,0.82)',
-    fontSize: 12,
-    fontWeight: '700',
-    textTransform: 'uppercase',
-  },
-  ctaTitle: {
-    color: colors.textLight,
-    fontSize: 24,
-    fontWeight: '800',
-    lineHeight: 30,
-  },
-  ctaText: {
-    color: 'rgba(255,255,255,0.92)',
-    fontSize: 15,
-    lineHeight: 22,
-  },
-  ctaActions: {
-    gap: spacing.sm,
   },
   fullWidth: {
     width: '100%',
