@@ -26,11 +26,11 @@ export default function OrderConfirmationScreen({ navigation }) {
   const totalAmount = `$${(selectedTour.price * cart.quantity).toLocaleString()}`;
 
   const navigateHome = () => {
-    navigation.getParent()?.navigate('MainTabs', { screen: 'Home' });
+    navigation.navigate('MainTabs', { screen: 'Home' });
   };
 
   const navigateTours = () => {
-    navigation.getParent()?.navigate('MainTabs', { screen: 'Tours' });
+    navigation.navigate('MainTabs', { screen: 'Tours' });
   };
 
   return (

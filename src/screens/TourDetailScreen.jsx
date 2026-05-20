@@ -43,9 +43,7 @@ export default function TourDetailScreen({ navigation, route }) {
       })
     );
 
-    navigation.getParent()?.getParent()?.navigate('CartStack', {
-      screen: 'Cart',
-    });
+    navigation.navigate('Cart');
   };
 
   return (

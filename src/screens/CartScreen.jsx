@@ -56,7 +56,7 @@ export default function CartScreen({ navigation }) {
   };
 
   const continueShopping = () => {
-    navigation.getParent()?.navigate('MainTabs', { screen: 'Tours' });
+    navigation.navigate('MainTabs', { screen: 'Tours' });
   };
 
   return (

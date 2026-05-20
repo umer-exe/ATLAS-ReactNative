@@ -1,8 +1,8 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 import ContactScreen from '../screens/ContactScreen';
-import HomeStackNavigator from './HomeStackNavigator';
-import ToursStackNavigator from './ToursStackNavigator';
+import HomeScreen from '../screens/HomeScreen';
+import ToursScreen from '../screens/ToursScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -15,8 +15,8 @@ export default function TabNavigator() {
         tabBarInactiveTintColor: '#6b7280',
       }}
     >
-      <Tab.Screen name="Home" component={HomeStackNavigator} />
-      <Tab.Screen name="Tours" component={ToursStackNavigator} />
+      <Tab.Screen name="Home" component={HomeScreen} />
+      <Tab.Screen name="Tours" component={ToursScreen} />
       <Tab.Screen name="Contact" component={ContactScreen} />
     </Tab.Navigator>
   );

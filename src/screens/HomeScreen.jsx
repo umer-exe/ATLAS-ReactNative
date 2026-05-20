@@ -1,3 +1,4 @@
+import { CommonActions } from '@react-navigation/native';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import TestimonialCard from '../components/home/TestimonialCard';
@@ -18,6 +19,18 @@ import spacing from '../styles/spacing';
 
 export default function HomeScreen({ navigation }) {
   const { brandName } = useTheme();
+
+  const openFeaturedTourDetail = (tourTitle) => {
+    navigation.getParent()?.dispatch(
+      CommonActions.reset({
+        index: 1,
+        routes: [
+          { name: 'MainTabs', params: { screen: 'Tours' } },
+          { name: 'TourDetail', params: { tourTitle } },
+        ],
+      })
+    );
+  };
 
   return (
     <AppScreen scrollable>
@@ -48,7 +61,7 @@ export default function HomeScreen({ navigation }) {
           {featuredTours.slice(0, 3).map((tour) => (
             <TourCard
               key={tour.id}
-              onPress={() => navigation.navigate('TourDetail', { tourTitle: tour.title })}
+              onPress={() => openFeaturedTourDetail(tour.title)}
               tour={tour}
             />
           ))}

@@ -1,7 +1,7 @@
+import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
 import { createDrawerNavigator, DrawerContentScrollView, DrawerItem } from '@react-navigation/drawer';
 
-import CartStackNavigator from './CartStackNavigator';
-import TabNavigator from './TabNavigator';
+import AppStackNavigator from './AppStackNavigator';
 
 const Drawer = createDrawerNavigator();
 
@@ -13,7 +13,6 @@ function AtlasDrawerContent(props) {
       <DrawerItem label="Home" onPress={() => navigation.navigate('MainTabs', { screen: 'Home' })} />
       <DrawerItem label="Tours" onPress={() => navigation.navigate('MainTabs', { screen: 'Tours' })} />
       <DrawerItem label="Contact" onPress={() => navigation.navigate('MainTabs', { screen: 'Contact' })} />
-      <DrawerItem label="Cart" onPress={() => navigation.navigate('CartStack')} />
     </DrawerContentScrollView>
   );
 }
@@ -22,10 +21,17 @@ export default function DrawerNavigator() {
   return (
     <Drawer.Navigator
       drawerContent={(props) => <AtlasDrawerContent {...props} />}
-      screenOptions={{ headerShown: false }}
+      screenOptions={({ route }) => {
+        const activeRoute = getFocusedRouteNameFromRoute(route) ?? 'MainTabs';
+        const drawerEnabled = !['TourDetail', 'Cart', 'OrderConfirmation'].includes(activeRoute);
+
+        return {
+          headerShown: false,
+          swipeEnabled: drawerEnabled,
+        };
+      }}
     >
-      <Drawer.Screen name="MainTabs" component={TabNavigator} />
-      <Drawer.Screen name="CartStack" component={CartStackNavigator} />
+      <Drawer.Screen name="AppStack" component={AppStackNavigator} />
     </Drawer.Navigator>
   );
 }

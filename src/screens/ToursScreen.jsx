@@ -54,7 +54,7 @@ export default function ToursScreen({ navigation }) {
   };
 
   const openCart = () => {
-    navigation.getParent()?.getParent()?.navigate('CartStack');
+    navigation.navigate('Cart');
   };
 
   const renderHeader = () => (
