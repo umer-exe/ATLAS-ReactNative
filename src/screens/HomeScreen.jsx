@@ -25,23 +25,16 @@ export default function HomeScreen({ navigation }) {
         <ScreenHeader brandName={brandName} pageLabel="Home" />
 
         <ScreenHero
-          eyebrow="Curated journeys across Pakistan and beyond"
+          compact
           title="Discover Your Next Adventure"
-          subtitle="Explore international escapes and memorable local tours designed for travelers who want something polished, simple, and easy to book on mobile."
+          subtitle="Explore curated domestic and international tours made simple for mobile booking."
         >
           <View style={styles.heroActions}>
             <AppButton
-              label="International Tours"
+              label="Browse Tours"
               onPress={() => navigation.navigate('Tours')}
-              style={styles.flexButton}
-              textStyle={styles.heroButtonLabel}
-            />
-            <AppButton
-              label="Domestic Tours"
-              onPress={() => navigation.navigate('Tours')}
-              style={styles.flexButton}
-              textStyle={styles.secondaryHeroLabel}
-              variant="secondary"
+              style={[styles.flexButton, styles.heroButtonCompact, styles.heroBrowseButton]}
+              textStyle={styles.heroBrowseLabel}
             />
           </View>
         </ScreenHero>
@@ -55,6 +48,7 @@ export default function HomeScreen({ navigation }) {
           {featuredTours.slice(0, 3).map((tour) => (
             <TourCard
               key={tour.id}
+              compact
               onPress={() => navigation.navigate('TourDetail', { tourTitle: tour.title })}
               tour={tour}
             />
@@ -95,8 +89,12 @@ export default function HomeScreen({ navigation }) {
             Browse tour packages, compare destinations, and reach out when you are ready to book.
           </Text>
           <View style={styles.ctaActions}>
-            <AppButton label="Contact Us" onPress={() => navigation.navigate('Contact')} style={styles.flexButton} />
-            <AppButton label="Call Now" onPress={() => navigation.navigate('Contact')} style={styles.flexButton} variant="secondary" />
+            <AppButton
+              label="Contact Us"
+              onPress={() => navigation.navigate('Contact')}
+              style={[styles.flexButton, styles.ctaButton]}
+              textStyle={styles.ctaButtonLabel}
+            />
           </View>
         </AppCard>
 
@@ -112,16 +110,21 @@ const styles = StyleSheet.create({
     padding: spacing.lg,
   },
   heroActions: {
+    marginTop: spacing.xs,
     gap: spacing.sm,
   },
   flexButton: {
     width: '100%',
   },
-  heroButtonLabel: {
-    color: colors.textLight,
+  heroButtonCompact: {
+    minHeight: 40,
+    paddingVertical: spacing.xs,
   },
-  secondaryHeroLabel: {
-    color: colors.primaryDark,
+  heroBrowseButton: {
+    backgroundColor: colors.surface,
+  },
+  heroBrowseLabel: {
+    color: colors.primary,
   },
   section: {
     gap: spacing.md,
@@ -160,5 +163,11 @@ const styles = StyleSheet.create({
   },
   ctaActions: {
     gap: spacing.sm,
+  },
+  ctaButton: {
+    backgroundColor: colors.surface,
+  },
+  ctaButtonLabel: {
+    color: colors.primary,
   },
 });

@@ -6,11 +6,11 @@ import AppBadge from '../ui/AppBadge';
 import AppButton from '../ui/AppButton';
 import AppCard from '../ui/AppCard';
 
-export default function TourCard({ tour, onPress }) {
+export default function TourCard({ tour, onPress, compact = false }) {
   return (
     <AppCard style={styles.card}>
       <Pressable accessibilityRole="button" onPress={onPress} style={styles.content}>
-        <View style={styles.imagePlaceholder}>
+        <View style={[styles.imagePlaceholder, compact && styles.imagePlaceholderCompact]}>
           <Text style={styles.imageText}>{tour.images.imageName}</Text>
         </View>
         <AppBadge label={tour.type} tone={tour.type === 'domestic' ? 'success' : 'default'} />
@@ -43,6 +43,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     padding: spacing.md,
+  },
+  imagePlaceholderCompact: {
+    height: 128,
   },
   imageText: {
     color: colors.surface,
