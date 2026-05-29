@@ -1,4 +1,5 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { useEffect, useState } from 'react';
+import { Image, StyleSheet, Text, View } from 'react-native';
 import { useSelector } from 'react-redux';
 
 import AppBadge from '../components/ui/AppBadge';
@@ -8,22 +9,49 @@ import AppScreen from '../components/ui/AppScreen';
 import ScreenHeader from '../components/ui/ScreenHeader';
 import SectionTitle from '../components/ui/SectionTitle';
 import { useTheme } from '../context/ThemeContext';
-import { toursData } from '../data/toursData';
+import { getOrderByNumber } from '../firebase/atlasFirebaseApi';
 import colors from '../styles/colors';
 import spacing from '../styles/spacing';
 
-const defaultTour = toursData[1];
-
-export default function OrderConfirmationScreen({ navigation }) {
+export default function OrderConfirmationScreen({ navigation, route }) {
   const { brandName } = useTheme();
-  const cart = useSelector((state) => state.cart);
-  const selectedTour =
-    toursData.find((item) => item.slug === cart.selectedTourSlug) ?? defaultTour;
-  const customerName = `${cart.customerInfo.firstName || 'Muhammad'} ${cart.customerInfo.lastName || 'Ali'}`;
-  const fullAddress = cart.customerInfo.address
-    ? `${cart.customerInfo.address}, ${cart.customerInfo.city || 'City not provided'}, ${cart.customerInfo.country || 'Country not provided'}`
-    : 'Address not provided';
-  const totalAmount = `$${(selectedTour.price * cart.quantity).toLocaleString()}`;
+  const lastOrderNumber = useSelector((state) => state.cart.lastOrderNumber);
+  const orderNumber = route.params?.orderNumber ?? lastOrderNumber;
+  const [order, setOrder] = useState(null);
+  const [loading, setLoading] = useState(Boolean(orderNumber));
+  const [dataError, setDataError] = useState('');
+
+  useEffect(() => {
+    let mounted = true;
+
+    const loadOrder = async () => {
+      if (!orderNumber) {
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const databaseOrder = await getOrderByNumber(orderNumber);
+
+        if (mounted) {
+          setOrder(databaseOrder);
+          setDataError('');
+          setLoading(false);
+        }
+      } catch (error) {
+        if (mounted) {
+          setDataError(error.message || 'Firebase order could not be loaded.');
+          setLoading(false);
+        }
+      }
+    };
+
+    loadOrder();
+
+    return () => {
+      mounted = false;
+    };
+  }, [orderNumber]);
 
   const navigateHome = () => {
     navigation.navigate('MainTabs', { screen: 'Home' });
@@ -33,6 +61,38 @@ export default function OrderConfirmationScreen({ navigation }) {
     navigation.navigate('MainTabs', { screen: 'Tours' });
   };
 
+  if (loading) {
+    return (
+      <AppScreen>
+        <View style={styles.loadingContainer}>
+          <Text style={styles.loadingText}>Loading confirmation...</Text>
+        </View>
+      </AppScreen>
+    );
+  }
+
+  if (!order) {
+    return (
+      <AppScreen scrollable>
+        <View style={styles.container}>
+          <ScreenHeader brandName={brandName} pageLabel="Confirmation" />
+          <AppCard style={styles.confirmationCard}>
+            <Text style={styles.headerTitle}>No confirmed order found</Text>
+            <Text style={styles.infoRow}>
+              {dataError || 'Confirm a booking from the cart to create a saved order.'}
+            </Text>
+            <AppButton label="Browse Tours" onPress={navigateTours} />
+          </AppCard>
+        </View>
+      </AppScreen>
+    );
+  }
+
+  const customerName = `${order.customerInfo.firstName} ${order.customerInfo.lastName}`;
+  const fullAddress = order.customerInfo.address
+    ? `${order.customerInfo.address}, ${order.customerInfo.city || 'City not provided'}, ${order.customerInfo.country || 'Country not provided'}`
+    : 'Address not provided';
+
   return (
     <AppScreen scrollable>
       <View style={styles.container}>
@@ -41,53 +101,45 @@ export default function OrderConfirmationScreen({ navigation }) {
         <AppCard style={styles.confirmationCard}>
           <View style={styles.cardHeader}>
             <Text style={styles.headerTitle}>Order Confirmation</Text>
-            <Text style={styles.orderNumber}>Order #AT-{String(cart.quantity).padStart(2, '0')}427</Text>
+            <Text style={styles.orderNumber}>Order #{order.orderNumber}</Text>
           </View>
 
           <AppBadge label="Confirmed" tone="success" />
 
-          <SectionTitle
-            eyebrow="Customer Information"
-            subtitle="Your booking details are saved in this frontend-only confirmation flow."
-            title={customerName}
-          />
+          <SectionTitle eyebrow="Customer Information" title={customerName} />
           <View style={styles.infoStack}>
-            <Text style={styles.infoRow}>Email: {cart.customerInfo.email || 'traveler@example.com'}</Text>
-            <Text style={styles.infoRow}>Phone: {cart.customerInfo.phone || '+92 300 1234567'}</Text>
+            <Text style={styles.infoRow}>Email: {order.customerInfo.email}</Text>
+            <Text style={styles.infoRow}>Phone: {order.customerInfo.phone || 'Phone not provided'}</Text>
             <Text style={styles.infoRow}>
-              Payment Method: {cart.paymentMethod === 'card' ? 'Card On Delivery' : 'Cash On Delivery'}
+              Payment Method: {order.paymentMethod === 'card' ? 'Card On Delivery' : 'Cash On Delivery'}
             </Text>
             <Text style={styles.infoRow}>Address: {fullAddress}</Text>
           </View>
 
-          <SectionTitle
-            eyebrow="Tour Details"
-            subtitle="A condensed summary inspired by the website confirmation card."
-            title={selectedTour.title}
-          />
-          <View style={styles.tourRow}>
-            <View style={styles.imagePlaceholder}>
-              <Text style={styles.imageText}>{selectedTour.images.imageName}</Text>
-            </View>
-            <View style={styles.tourCopy}>
-              <Text style={styles.tourMeta}>{selectedTour.location}</Text>
-              <Text style={styles.tourMeta}>Departure: {cart.departureDate}</Text>
-              <Text style={styles.tourMeta}>{selectedTour.duration}</Text>
-              <Text style={styles.tourMeta}>Travelers: {cart.quantity}</Text>
-              <AppBadge label={`${selectedTour.type} tour`} tone={selectedTour.type === 'domestic' ? 'success' : 'default'} />
-            </View>
+          <SectionTitle eyebrow="Tour Details" title="Booked tours" />
+          <View style={styles.itemsStack}>
+            {order.items.map((item) => (
+              <View key={item.id} style={styles.tourItem}>
+                <Image resizeMode="cover" source={item.image} style={styles.tourImage} />
+                <View style={styles.tourCopy}>
+                  <Text style={styles.tourTitle}>{item.title}</Text>
+                  <Text style={styles.tourMeta}>{item.location}</Text>
+                  <Text style={styles.tourMeta}>Departure: {item.departureDate}</Text>
+                  <Text style={styles.tourMeta}>{item.duration}</Text>
+                  <Text style={styles.tourMeta}>Travelers: {item.travelers}</Text>
+                  <AppBadge label={`${item.type} tour`} tone={item.type === 'domestic' ? 'success' : 'default'} />
+                  <Text style={styles.lineTotal}>{item.formattedLineTotal}</Text>
+                </View>
+              </View>
+            ))}
           </View>
 
           <View style={styles.totalCard}>
             <Text style={styles.totalLabel}>Total Amount</Text>
-            <Text style={styles.totalValue}>{totalAmount}</Text>
+            <Text style={styles.totalValue}>{order.formattedTotal}</Text>
           </View>
 
-          <SectionTitle
-            eyebrow="What's Next"
-            subtitle="The next-step guidance mirrors the reassurance shown on the original site."
-            title="What happens after confirmation"
-          />
+          <SectionTitle eyebrow="What's Next" title="What happens after confirmation" />
           <View style={styles.nextSteps}>
             <Text style={styles.step}>- Our travel team will review your booking details.</Text>
             <Text style={styles.step}>- You will receive a follow-up call or email for departure coordination.</Text>
@@ -99,13 +151,23 @@ export default function OrderConfirmationScreen({ navigation }) {
             <AppButton label="Browse Tours" onPress={navigateTours} variant="secondary" />
           </View>
         </AppCard>
-
       </View>
     </AppScreen>
   );
 }
 
 const styles = StyleSheet.create({
+  loadingContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: spacing.lg,
+  },
+  loadingText: {
+    color: colors.textMuted,
+    fontSize: 15,
+    fontWeight: '600',
+  },
   container: {
     gap: spacing.xl,
     padding: spacing.lg,
@@ -137,35 +199,37 @@ const styles = StyleSheet.create({
     fontSize: 15,
     lineHeight: 22,
   },
-  tourRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    alignItems: 'center',
+  itemsStack: {
     gap: spacing.md,
   },
-  imagePlaceholder: {
-    width: 96,
-    height: 96,
-    borderRadius: 16,
-    backgroundColor: colors.primaryLight,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: spacing.sm,
+  tourItem: {
+    gap: spacing.md,
+    paddingBottom: spacing.md,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border,
   },
-  imageText: {
-    color: colors.primaryDark,
-    fontSize: 12,
-    fontWeight: '600',
-    textAlign: 'center',
+  tourImage: {
+    width: '100%',
+    height: 150,
+    borderRadius: 16,
   },
   tourCopy: {
-    flex: 1,
-    minWidth: 180,
     gap: spacing.xs,
+  },
+  tourTitle: {
+    color: colors.text,
+    fontSize: 18,
+    fontWeight: '800',
   },
   tourMeta: {
     color: colors.textSoft,
     fontSize: 14,
+  },
+  lineTotal: {
+    color: colors.primary,
+    fontSize: 17,
+    fontWeight: '800',
+    marginTop: spacing.xs,
   },
   totalCard: {
     backgroundColor: colors.primaryLight,

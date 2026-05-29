@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { ImageBackground, StyleSheet, Text, View } from 'react-native';
 
 import colors from '../../styles/colors';
 import spacing from '../../styles/spacing';
@@ -7,13 +7,18 @@ import AppCard from '../ui/AppCard';
 export default function DestinationCard({ destination }) {
   return (
     <AppCard style={styles.card}>
-      <View style={styles.imagePlaceholder}>
-        <Text style={styles.locationHint}>{destination.imageName}</Text>
-      </View>
-      <View style={styles.overlay}>
-        <Text style={styles.title}>{destination.title}</Text>
-        <Text style={styles.location}>{destination.location}</Text>
-      </View>
+      <ImageBackground
+        imageStyle={styles.image}
+        resizeMode="cover"
+        source={destination.image}
+        style={styles.imageBackground}
+      >
+        <View style={styles.scrim} />
+        <View style={styles.overlay}>
+          <Text style={styles.title}>{destination.title}</Text>
+          <Text style={styles.location}>{destination.location}</Text>
+        </View>
+      </ImageBackground>
     </AppCard>
   );
 }
@@ -23,16 +28,17 @@ const styles = StyleSheet.create({
     padding: spacing.sm,
     overflow: 'hidden',
   },
-  imagePlaceholder: {
+  imageBackground: {
     height: 180,
     borderRadius: 14,
-    backgroundColor: '#4338ca',
-    justifyContent: 'flex-end',
-    padding: spacing.md,
+    overflow: 'hidden',
   },
-  locationHint: {
-    color: 'rgba(255,255,255,0.75)',
-    fontSize: 13,
+  image: {
+    borderRadius: 14,
+  },
+  scrim: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(15, 23, 42, 0.38)',
   },
   overlay: {
     position: 'absolute',

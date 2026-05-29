@@ -1,63 +1,189 @@
-import { useState } from 'react';
-import { Alert, StyleSheet, Text, View } from 'react-native';
+import { useMemo, useState } from 'react';
+import { Alert, Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 
 import AppButton from '../components/ui/AppButton';
 import AppCard from '../components/ui/AppCard';
 import AppInput from '../components/ui/AppInput';
 import AppScreen from '../components/ui/AppScreen';
+import PhoneNumberInput, { formatPakistanPhone, sanitizePhoneDigits } from '../components/ui/PhoneNumberInput';
 import SectionTitle from '../components/ui/SectionTitle';
 import { useTheme } from '../context/ThemeContext';
-import { setCheckoutDetails, updateQuantity } from '../store/cartSlice';
-import { toursData } from '../data/toursData';
+import { getTourImageSource, formatPrice } from '../data/toursData';
+import { createOrder } from '../firebase/atlasFirebaseApi';
+import {
+  removeCartItem,
+  setCheckoutDetails,
+  updateCartItemTravelers,
+} from '../store/cartSlice';
 import colors from '../styles/colors';
 import spacing from '../styles/spacing';
+import { emailValidationMessage, isAcceptedEmail, normalizeEmail } from '../utils/validation';
+
+const locationOptions = [
+  {
+    country: 'Pakistan',
+    cities: [
+      'Lahore',
+      'Karachi',
+      'Islamabad',
+      'Rawalpindi',
+      'Faisalabad',
+      'Multan',
+      'Peshawar',
+      'Quetta',
+      'Sialkot',
+      'Hyderabad',
+      'Gujranwala',
+      'Bahawalpur',
+    ],
+  },
+];
+
+const defaultLocation = locationOptions[0];
+
+const getLocationOption = (country) =>
+  locationOptions.find((option) => option.country === country) ?? defaultLocation;
+
+const getInitialCountry = (savedCountry) =>
+  locationOptions.some((option) => option.country === savedCountry)
+    ? savedCountry
+    : defaultLocation.country;
+
+const getInitialCity = (country, savedCity) => {
+  const option = getLocationOption(country);
+  return option.cities.includes(savedCity) ? savedCity : '';
+};
+
+function OptionPicker({ label, onSelect, options, value }) {
+  return (
+    <View style={styles.fieldGroup}>
+      <Text style={styles.fieldLabel}>{label}</Text>
+      <View style={styles.optionGrid}>
+        {options.map((option) => {
+          const selected = option === value;
+
+          return (
+            <Pressable
+              accessibilityRole="button"
+              key={option}
+              onPress={() => onSelect(option)}
+              style={[styles.optionChip, selected && styles.selectedOptionChip]}
+            >
+              <Text numberOfLines={1} style={[styles.optionText, selected && styles.selectedOptionText]}>
+                {option}
+              </Text>
+            </Pressable>
+          );
+        })}
+      </View>
+    </View>
+  );
+}
 
 export default function CartScreen({ navigation }) {
   const dispatch = useDispatch();
   const { brandName } = useTheme();
   const cart = useSelector((state) => state.cart);
-  const selectedTour =
-    toursData.find((item) => item.slug === cart.selectedTourSlug) ?? toursData[1];
+  const initialCountry = getInitialCountry(cart.customerInfo.country);
   const [firstName, setFirstName] = useState(cart.customerInfo.firstName);
   const [lastName, setLastName] = useState(cart.customerInfo.lastName);
   const [email, setEmail] = useState(cart.customerInfo.email);
-  const [phone, setPhone] = useState(cart.customerInfo.phone);
+  const [phoneDigits, setPhoneDigits] = useState(sanitizePhoneDigits(cart.customerInfo.phone));
   const [address, setAddress] = useState(cart.customerInfo.address);
-  const [city, setCity] = useState(cart.customerInfo.city);
-  const [country, setCountry] = useState(cart.customerInfo.country);
+  const [country, setCountry] = useState(initialCountry);
+  const [city, setCity] = useState(getInitialCity(initialCountry, cart.customerInfo.city));
   const [paymentMethod, setPaymentMethod] = useState(cart.paymentMethod);
+  const [saving, setSaving] = useState(false);
 
-  const totalAmount = selectedTour.price * cart.quantity;
-  const formattedTotal = `$${totalAmount.toLocaleString()}`;
+  const totals = useMemo(
+    () =>
+      cart.items.reduce(
+        (summary, item) => {
+          const travelers = Number(item.travelers) || 1;
+          const lineTotal = Number(item.price) * travelers;
 
-  const confirmBooking = () => {
-    if (!firstName.trim() || !lastName.trim() || !email.trim()) {
-      Alert.alert('Missing information', 'Please fill in your first name, last name, and email before confirming.');
+          return {
+            travelers: summary.travelers + travelers,
+            amount: summary.amount + lineTotal,
+          };
+        },
+        { travelers: 0, amount: 0 }
+      ),
+    [cart.items]
+  );
+
+  const confirmBooking = async () => {
+    if (!cart.items.length) {
+      Alert.alert('Cart is empty', 'Please add at least one tour before confirming your booking.');
       return;
     }
 
-    dispatch(
-      setCheckoutDetails({
-        customerInfo: {
-          firstName,
-          lastName,
-          email,
-          phone,
-          address,
-          city,
-          country,
-        },
-        paymentMethod,
-      })
-    );
+    const cleanEmail = normalizeEmail(email);
 
-    navigation.replace('OrderConfirmation');
+    if (!firstName.trim() || !lastName.trim() || !cleanEmail || !phoneDigits || !country || !city) {
+      Alert.alert(
+        'Missing information',
+        'Please fill in your name, email, phone number, country, and city before confirming.'
+      );
+      return;
+    }
+
+    if (!isAcceptedEmail(cleanEmail)) {
+      Alert.alert('Invalid email address', emailValidationMessage);
+      return;
+    }
+
+    if (saving) {
+      return;
+    }
+
+    setSaving(true);
+
+    try {
+      const customerInfo = {
+        firstName,
+        lastName,
+        email: cleanEmail,
+        phone: formatPakistanPhone(phoneDigits),
+        address,
+        city,
+        country,
+      };
+      const { orderNumber } = await createOrder({
+        customerInfo,
+        paymentMethod,
+        items: cart.items,
+      });
+
+      dispatch(
+        setCheckoutDetails({
+          customerInfo,
+          paymentMethod,
+          orderNumber,
+        })
+      );
+
+      navigation.replace('OrderConfirmation', { orderNumber });
+    } catch (error) {
+      Alert.alert('Booking not saved', error.message || 'Please try confirming your booking again.');
+    } finally {
+      setSaving(false);
+    }
   };
 
   const continueShopping = () => {
     navigation.navigate('MainTabs', { screen: 'Tours' });
   };
+
+  const selectCountry = (nextCountry) => {
+    const option = getLocationOption(nextCountry);
+
+    setCountry(nextCountry);
+    setCity(option.cities[0]);
+  };
+
+  const cityOptions = getLocationOption(country).cities;
 
   return (
     <AppScreen scrollable>
@@ -65,7 +191,7 @@ export default function CartScreen({ navigation }) {
         <View style={styles.topBar}>
           <Text style={styles.logo}>{brandName}</Text>
           <View style={styles.cartPill}>
-            <Text style={styles.cartPillText}>Cart • {cart.quantity}</Text>
+            <Text style={styles.cartPillText}>Cart - {totals.travelers}</Text>
           </View>
         </View>
 
@@ -80,42 +206,105 @@ export default function CartScreen({ navigation }) {
           <Text style={styles.heroSubtitle}>Review your tours and complete your booking.</Text>
         </AppCard>
 
+        <AppCard style={styles.summaryCard}>
+          <SectionTitle eyebrow="Order Summary" title="Selected tours" />
+
+          {cart.items.length ? (
+            <View style={styles.cartItems}>
+              {cart.items.map((item) => (
+                <View key={item.id} style={styles.cartItem}>
+                  <Image resizeMode="cover" source={getTourImageSource(item.imageName)} style={styles.itemImage} />
+                  <View style={styles.itemCopy}>
+                    <Text style={styles.tourTitle}>{item.title}</Text>
+                    <Text style={styles.tourMeta}>{item.duration}</Text>
+                    <Text style={styles.tourMeta}>Departure: {item.departureDate}</Text>
+                    <Text style={styles.tourMeta}>Price: {item.formattedPrice}</Text>
+                  </View>
+
+                  <View style={styles.quantityRow}>
+                    <Text style={styles.quantityLabel}>Travelers</Text>
+                    <View style={styles.quantityControls}>
+                      <AppButton
+                        label="-"
+                        onPress={() =>
+                          dispatch(updateCartItemTravelers({ id: item.id, travelers: item.travelers - 1 }))
+                        }
+                        style={styles.quantityButton}
+                        variant="secondary"
+                      />
+                      <Text style={styles.quantityValue}>{item.travelers}</Text>
+                      <AppButton
+                        label="+"
+                        onPress={() =>
+                          dispatch(updateCartItemTravelers({ id: item.id, travelers: item.travelers + 1 }))
+                        }
+                        style={styles.quantityButton}
+                        variant="secondary"
+                      />
+                    </View>
+                  </View>
+
+                  <View style={styles.summaryLine}>
+                    <Text style={styles.summaryLabel}>Line Total</Text>
+                    <Text style={styles.summaryValue}>{formatPrice(Number(item.price) * item.travelers)}</Text>
+                  </View>
+
+                  <AppButton
+                    label="Remove"
+                    onPress={() => dispatch(removeCartItem(item.id))}
+                    style={styles.removeButton}
+                    variant="secondary"
+                  />
+                </View>
+              ))}
+            </View>
+          ) : (
+            <View style={styles.emptyCart}>
+              <Text style={styles.emptyTitle}>Your cart is empty</Text>
+              <Text style={styles.emptyText}>Add one or more tours before confirming a booking.</Text>
+            </View>
+          )}
+
+          <View style={styles.summaryLine}>
+            <Text style={styles.summaryLabel}>Total Travelers</Text>
+            <Text style={styles.summaryValue}>{totals.travelers}</Text>
+          </View>
+          <View style={styles.summaryLine}>
+            <Text style={styles.summaryLabel}>Total Amount</Text>
+            <Text style={styles.totalValue}>{formatPrice(totals.amount)}</Text>
+          </View>
+        </AppCard>
+
         <AppCard style={styles.formCard}>
-          <SectionTitle
-            eyebrow="Customer Information"
-            subtitle="This stays simple for the course project, but still matches the shape of the website checkout."
-            title="Who is traveling?"
-          />
+          <SectionTitle eyebrow="Customer Information" title="Who is traveling?" />
           <AppInput label="First Name" onChangeText={setFirstName} placeholder="First name" returnKeyType="next" value={firstName} />
           <AppInput label="Last Name" onChangeText={setLastName} placeholder="Last name" returnKeyType="next" value={lastName} />
           <AppInput
             autoCapitalize="none"
+            autoCorrect={false}
             keyboardType="email-address"
             label="Email Address"
-            onChangeText={setEmail}
+            onChangeText={(value) => setEmail(normalizeEmail(value))}
             placeholder="name@example.com"
             returnKeyType="next"
+            textContentType="emailAddress"
             value={email}
           />
-          <AppInput
-            keyboardType="phone-pad"
-            label="Phone Number"
-            onChangeText={setPhone}
-            placeholder="+92 300 1234567"
-            returnKeyType="next"
-            value={phone}
-          />
+          <PhoneNumberInput onChangeText={setPhoneDigits} value={phoneDigits} />
           <AppInput label="Address" multiline onChangeText={setAddress} placeholder="Street address" value={address} />
-          <AppInput label="City" onChangeText={setCity} placeholder="Lahore" value={city} />
-          <AppInput label="Country" onChangeText={setCountry} placeholder="Pakistan" value={country} />
+          <View style={styles.locationStack}>
+            <OptionPicker
+              label="Country"
+              onSelect={selectCountry}
+              options={locationOptions.map((option) => option.country)}
+              value={country}
+            />
+            <OptionPicker label="City" onSelect={setCity} options={cityOptions} value={city} />
+          </View>
         </AppCard>
 
         <AppCard style={styles.paymentCard}>
-          <SectionTitle
-            eyebrow="Payment Method"
-            subtitle="No real payment flow is added here. These are presentation-only choices."
-            title="Choose an option"
-          />
+          <SectionTitle eyebrow="Payment Method" title="Choose an option" />
           <View style={styles.optionStack}>
             <AppButton
               label="Cash On Delivery"
@@ -132,55 +321,11 @@ export default function CartScreen({ navigation }) {
           </View>
         </AppCard>
 
-        <AppCard style={styles.summaryCard}>
-          <SectionTitle
-            eyebrow="Order Summary"
-            subtitle="A compact mobile summary of the package before booking confirmation."
-            title="Your selected tour"
-          />
-          <View style={styles.tourPreview}>
-            <View style={styles.imagePlaceholder}>
-              <Text style={styles.imageText}>{selectedTour.images.imageName}</Text>
-            </View>
-            <View style={styles.tourCopy}>
-              <Text style={styles.tourTitle}>{selectedTour.title}</Text>
-              <Text style={styles.tourMeta}>{selectedTour.duration}</Text>
-              <Text style={styles.tourMeta}>Departure: {cart.departureDate}</Text>
-            </View>
-          </View>
-
-          <View style={styles.quantityRow}>
-            <Text style={styles.quantityLabel}>Travelers</Text>
-            <View style={styles.quantityControls}>
-              <AppButton
-                label="-"
-                onPress={() => dispatch(updateQuantity(cart.quantity - 1))}
-                style={styles.quantityButton}
-                variant="secondary"
-              />
-              <Text style={styles.quantityValue}>{cart.quantity}</Text>
-              <AppButton
-                label="+"
-                onPress={() => dispatch(updateQuantity(cart.quantity + 1))}
-                style={styles.quantityButton}
-                variant="secondary"
-              />
-            </View>
-          </View>
-
-          <View style={styles.summaryLine}>
-            <Text style={styles.summaryLabel}>Tour Price</Text>
-            <Text style={styles.summaryValue}>{selectedTour.formattedPrice}</Text>
-          </View>
-          <View style={styles.summaryLine}>
-            <Text style={styles.summaryLabel}>Total Amount</Text>
-            <Text style={styles.totalValue}>{formattedTotal}</Text>
-          </View>
-
-          <AppButton label="Confirm Booking" onPress={confirmBooking} />
+        <View style={styles.actionStack}>
+          <AppButton label={saving ? 'Saving Booking...' : 'Confirm Booking'} onPress={confirmBooking} />
           <AppButton label="Continue Shopping" onPress={continueShopping} variant="secondary" />
           <Text style={styles.termsText}>By confirming, you agree to Atlas Tours booking terms and privacy guidance.</Text>
-        </AppCard>
+        </View>
       </View>
     </AppScreen>
   );
@@ -242,6 +387,45 @@ const styles = StyleSheet.create({
   formCard: {
     gap: spacing.md,
   },
+  fieldGroup: {
+    gap: spacing.xs,
+  },
+  fieldLabel: {
+    color: colors.text,
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  locationStack: {
+    gap: spacing.md,
+  },
+  optionGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: spacing.sm,
+  },
+  optionChip: {
+    minHeight: 40,
+    maxWidth: '100%',
+    justifyContent: 'center',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: colors.border,
+    backgroundColor: colors.surface,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xs,
+  },
+  selectedOptionChip: {
+    borderColor: colors.primary,
+    backgroundColor: colors.primary,
+  },
+  optionText: {
+    color: colors.textSoft,
+    fontSize: 14,
+    fontWeight: '700',
+  },
+  selectedOptionText: {
+    color: colors.textLight,
+  },
   paymentCard: {
     gap: spacing.md,
   },
@@ -254,30 +438,21 @@ const styles = StyleSheet.create({
   summaryCard: {
     gap: spacing.md,
   },
-  tourPreview: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+  cartItems: {
     gap: spacing.md,
-    alignItems: 'center',
   },
-  imagePlaceholder: {
-    width: 92,
-    height: 92,
+  cartItem: {
+    gap: spacing.md,
+    paddingBottom: spacing.md,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border,
+  },
+  itemImage: {
+    width: '100%',
+    height: 150,
     borderRadius: 16,
-    backgroundColor: colors.primaryLight,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: spacing.sm,
   },
-  imageText: {
-    color: colors.primaryDark,
-    fontSize: 12,
-    fontWeight: '600',
-    textAlign: 'center',
-  },
-  tourCopy: {
-    flex: 1,
-    minWidth: 180,
+  itemCopy: {
     gap: 4,
   },
   tourTitle: {
@@ -307,7 +482,8 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
   },
   quantityButton: {
-    minWidth: 48,
+    minWidth: 44,
+    minHeight: 38,
   },
   quantityValue: {
     color: colors.text,
@@ -320,6 +496,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    gap: spacing.md,
   },
   summaryLabel: {
     color: colors.textMuted,
@@ -334,6 +511,28 @@ const styles = StyleSheet.create({
     color: colors.primary,
     fontSize: 22,
     fontWeight: '800',
+  },
+  removeButton: {
+    minHeight: 40,
+  },
+  emptyCart: {
+    gap: spacing.xs,
+    borderRadius: 14,
+    backgroundColor: colors.softSurface,
+    padding: spacing.md,
+  },
+  emptyTitle: {
+    color: colors.text,
+    fontSize: 17,
+    fontWeight: '800',
+  },
+  emptyText: {
+    color: colors.textMuted,
+    fontSize: 14,
+    lineHeight: 21,
+  },
+  actionStack: {
+    gap: spacing.sm,
   },
   termsText: {
     color: colors.textMuted,

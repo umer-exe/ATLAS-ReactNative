@@ -1,9 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-  selectedTourSlug: null,
-  departureDate: 'Flexible planning',
-  quantity: 1,
+  items: [],
   addedToCart: false,
   customerInfo: {
     firstName: '',
@@ -15,28 +13,62 @@ const initialState = {
     country: '',
   },
   paymentMethod: 'cash',
+  lastOrderNumber: null,
 };
+
+const buildCartItemId = (tourSlug, departureDate) => `${tourSlug}__${departureDate}`;
 
 const cartSlice = createSlice({
   name: 'cart',
   initialState,
   reducers: {
-    setCartSelection(state, action) {
-      state.selectedTourSlug = action.payload.selectedTourSlug;
-      state.departureDate = action.payload.departureDate;
-      state.quantity = action.payload.quantity;
+    addCartItem(state, action) {
+      const item = action.payload;
+      const cartItemId = buildCartItemId(item.tourSlug, item.departureDate);
+      const existingItem = state.items.find((cartItem) => cartItem.id === cartItemId);
+      const travelers = Math.max(1, Number(item.travelers) || 1);
+
+      if (existingItem) {
+        existingItem.travelers += travelers;
+      } else {
+        state.items.push({
+          id: cartItemId,
+          ...item,
+          travelers,
+        });
+      }
+
       state.addedToCart = true;
     },
-    updateQuantity(state, action) {
-      state.quantity = Math.max(1, action.payload);
+    updateCartItemTravelers(state, action) {
+      const { id, travelers } = action.payload;
+      const item = state.items.find((cartItem) => cartItem.id === id);
+
+      if (item) {
+        item.travelers = Math.max(1, Number(travelers) || 1);
+      }
+    },
+    removeCartItem(state, action) {
+      state.items = state.items.filter((item) => item.id !== action.payload);
+    },
+    dismissAddedToCart(state) {
+      state.addedToCart = false;
     },
     setCheckoutDetails(state, action) {
       state.customerInfo = action.payload.customerInfo;
       state.paymentMethod = action.payload.paymentMethod;
+      state.lastOrderNumber = action.payload.orderNumber;
+      state.items = [];
       state.addedToCart = false;
     },
   },
 });
 
-export const { setCartSelection, updateQuantity, setCheckoutDetails } = cartSlice.actions;
+export const {
+  addCartItem,
+  dismissAddedToCart,
+  removeCartItem,
+  setCheckoutDetails,
+  updateCartItemTravelers,
+} = cartSlice.actions;
 export default cartSlice.reducer;

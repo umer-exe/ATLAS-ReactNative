@@ -1,4 +1,5 @@
 import { CommonActions } from '@react-navigation/native';
+import { useEffect, useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import TestimonialCard from '../components/home/TestimonialCard';
@@ -12,21 +13,55 @@ import ScreenHeader from '../components/ui/ScreenHeader';
 import ScreenHero from '../components/ui/ScreenHero';
 import SectionTitle from '../components/ui/SectionTitle';
 import { useTheme } from '../context/ThemeContext';
-import { destinationsData, featuredTours } from '../data/toursData';
-import { testimonialsData } from '../data/testimonialsData';
+import { getDestinations, getFeaturedTours, getHomeReviews } from '../firebase/atlasFirebaseApi';
 import colors from '../styles/colors';
 import spacing from '../styles/spacing';
 
 export default function HomeScreen({ navigation }) {
   const { brandName } = useTheme();
+  const [featuredTours, setFeaturedTours] = useState([]);
+  const [destinations, setDestinations] = useState([]);
+  const [reviews, setReviews] = useState([]);
+  const [dataError, setDataError] = useState('');
 
-  const openFeaturedTourDetail = (tourTitle) => {
+  useEffect(() => {
+    let mounted = true;
+
+    const loadHomeData = async () => {
+      try {
+        const [featured, destinationItems, reviewItems] = await Promise.all([
+          getFeaturedTours(),
+          getDestinations(),
+          getHomeReviews(),
+        ]);
+
+        if (mounted) {
+          setFeaturedTours(featured);
+          setDestinations(destinationItems);
+          setReviews(reviewItems);
+          setDataError('');
+        }
+      } catch (error) {
+        if (mounted) {
+          setDataError(error.message || 'Firebase data could not be loaded.');
+        }
+      }
+    };
+
+    loadHomeData();
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  const openFeaturedTourDetail = (slug) => {
     navigation.getParent()?.dispatch(
       CommonActions.reset({
         index: 1,
         routes: [
           { name: 'MainTabs', params: { screen: 'Tours' } },
-          { name: 'TourDetail', params: { tourTitle } },
+          { name: 'TourDetail', params: { slug } },
         ],
       })
     );
@@ -52,6 +87,13 @@ export default function HomeScreen({ navigation }) {
           </View>
         </ScreenHero>
 
+        {dataError ? (
+          <AppCard style={styles.noticeCard}>
+            <Text style={styles.noticeTitle}>Firebase setup needed</Text>
+            <Text style={styles.noticeText}>{dataError}</Text>
+          </AppCard>
+        ) : null}
+
         <SectionTitle
           eyebrow="Featured Tours"
           subtitle="A mobile-first version of the website's featured tours section, with clean cards and quick detail access."
@@ -61,7 +103,7 @@ export default function HomeScreen({ navigation }) {
           {featuredTours.slice(0, 3).map((tour) => (
             <TourCard
               key={tour.id}
-              onPress={() => openFeaturedTourDetail(tour.title)}
+              onPress={() => openFeaturedTourDetail(tour.slug)}
               tour={tour}
             />
           ))}
@@ -74,7 +116,7 @@ export default function HomeScreen({ navigation }) {
           title="Around the world and close to home"
         />
         <ScrollView contentContainerStyle={styles.horizontalSection} horizontal showsHorizontalScrollIndicator={false}>
-          {destinationsData.map((destination) => (
+          {destinations.map((destination) => (
             <View key={destination.id} style={styles.horizontalCard}>
               <DestinationCard destination={destination} />
             </View>
@@ -87,7 +129,7 @@ export default function HomeScreen({ navigation }) {
           title="What travelers are saying"
         />
         <ScrollView contentContainerStyle={styles.horizontalSection} horizontal showsHorizontalScrollIndicator={false}>
-          {testimonialsData.map((testimonial) => (
+          {reviews.map((testimonial) => (
             <View key={testimonial.id} style={styles.testimonialCard}>
               <TestimonialCard testimonial={testimonial} />
             </View>
@@ -140,6 +182,21 @@ const styles = StyleSheet.create({
   },
   section: {
     gap: spacing.md,
+  },
+  noticeCard: {
+    gap: spacing.xs,
+    backgroundColor: '#FEF3C7',
+    borderColor: '#FDE68A',
+  },
+  noticeTitle: {
+    color: '#92400E',
+    fontSize: 16,
+    fontWeight: '800',
+  },
+  noticeText: {
+    color: '#92400E',
+    fontSize: 14,
+    lineHeight: 21,
   },
   horizontalSection: {
     gap: spacing.md,

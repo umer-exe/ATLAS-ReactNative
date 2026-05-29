@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import colors from '../../styles/colors';
 import spacing from '../../styles/spacing';
@@ -7,12 +7,18 @@ import AppButton from '../ui/AppButton';
 import AppCard from '../ui/AppCard';
 
 export default function TourCard({ tour, onPress }) {
+  const imageSource = tour.images?.thumbnail;
+
   return (
     <AppCard style={styles.card}>
       <Pressable accessibilityRole="button" onPress={onPress} style={styles.content}>
-        <View style={styles.imagePlaceholder}>
-          <Text style={styles.imageText}>{tour.images.imageName}</Text>
-        </View>
+        {imageSource ? (
+          <Image resizeMode="cover" source={imageSource} style={styles.image} />
+        ) : (
+          <View style={styles.imagePlaceholder}>
+            <Text style={styles.imageText}>{tour.images?.imageName ?? 'Tour image'}</Text>
+          </View>
+        )}
         <AppBadge label={tour.type} tone={tour.type === 'domestic' ? 'success' : 'default'} />
         <View style={styles.copy}>
           <Text style={styles.title}>{tour.title}</Text>
@@ -35,6 +41,11 @@ const styles = StyleSheet.create({
   },
   content: {
     gap: spacing.md,
+  },
+  image: {
+    height: 168,
+    borderRadius: 16,
+    width: '100%',
   },
   imagePlaceholder: {
     height: 168,

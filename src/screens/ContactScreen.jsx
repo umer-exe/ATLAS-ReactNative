@@ -7,29 +7,65 @@ import AppCard from '../components/ui/AppCard';
 import AppInput from '../components/ui/AppInput';
 import AppFooter from '../components/ui/AppFooter';
 import AppScreen from '../components/ui/AppScreen';
+import PhoneNumberInput, { formatPakistanPhone } from '../components/ui/PhoneNumberInput';
 import ScreenHeader from '../components/ui/ScreenHeader';
 import ScreenHero from '../components/ui/ScreenHero';
 import SectionTitle from '../components/ui/SectionTitle';
 import { useTheme } from '../context/ThemeContext';
 import { faqData } from '../data/faqData';
+import { createContactMessage } from '../firebase/atlasFirebaseApi';
 import colors from '../styles/colors';
 import spacing from '../styles/spacing';
+import { emailValidationMessage, isAcceptedEmail, normalizeEmail } from '../utils/validation';
 
-export default function ContactScreen({ navigation }) {
+export default function ContactScreen() {
   const { brandName, supportEmail, supportPhone } = useTheme();
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
+  const [phoneDigits, setPhoneDigits] = useState('');
   const [subject, setSubject] = useState('');
   const [message, setMessage] = useState('');
+  const [saving, setSaving] = useState(false);
 
-  const handleSubmit = () => {
-    if (!fullName.trim() || !email.trim() || !message.trim()) {
+  const handleSubmit = async () => {
+    const cleanEmail = normalizeEmail(email);
+
+    if (!fullName.trim() || !cleanEmail || !message.trim()) {
       Alert.alert('Missing information', 'Please fill in your name, email, and message before sending.');
       return;
     }
 
-    Alert.alert('Message Sent', 'Thanks for reaching out. Atlas Tours will get back to you soon.');
+    if (!isAcceptedEmail(cleanEmail)) {
+      Alert.alert('Invalid email address', emailValidationMessage);
+      return;
+    }
+
+    if (saving) {
+      return;
+    }
+
+    setSaving(true);
+
+    try {
+      await createContactMessage({
+        fullName,
+        email: cleanEmail,
+        phone: formatPakistanPhone(phoneDigits),
+        subject,
+        message,
+      });
+
+      setFullName('');
+      setEmail('');
+      setPhoneDigits('');
+      setSubject('');
+      setMessage('');
+      Alert.alert('Message Sent', 'Thanks for reaching out. Atlas Tours will get back to you soon.');
+    } catch (error) {
+      Alert.alert('Message not saved', error.message || 'Please try sending your message again.');
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -48,21 +84,16 @@ export default function ContactScreen({ navigation }) {
           <AppInput label="Full Name" onChangeText={setFullName} placeholder="Your full name" returnKeyType="next" value={fullName} />
           <AppInput
             autoCapitalize="none"
+            autoCorrect={false}
             keyboardType="email-address"
             label="Email Address"
-            onChangeText={setEmail}
+            onChangeText={(value) => setEmail(normalizeEmail(value))}
             placeholder="name@example.com"
             returnKeyType="next"
+            textContentType="emailAddress"
             value={email}
           />
-          <AppInput
-            keyboardType="phone-pad"
-            label="Phone Number"
-            onChangeText={setPhone}
-            placeholder={supportPhone}
-            returnKeyType="next"
-            value={phone}
-          />
+          <PhoneNumberInput onChangeText={setPhoneDigits} value={phoneDigits} />
           <AppInput label="Subject" onChangeText={setSubject} placeholder="Tour planning, pricing, or support" value={subject} />
           <AppInput
             label="Message"
@@ -72,7 +103,7 @@ export default function ContactScreen({ navigation }) {
             returnKeyType="done"
             value={message}
           />
-          <AppButton label="Send Message" onPress={handleSubmit} />
+          <AppButton label={saving ? 'Saving Message...' : 'Send Message'} onPress={handleSubmit} />
         </AppCard>
 
         <AppCard style={styles.infoCard}>

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FlatList, StyleSheet, Text, View } from 'react-native';
 
 import TourCard from '../components/tours/TourCard';
@@ -10,54 +10,27 @@ import AppScreen from '../components/ui/AppScreen';
 import ScreenHeader from '../components/ui/ScreenHeader';
 import ScreenHero from '../components/ui/ScreenHero';
 import { useTheme } from '../context/ThemeContext';
-import { toursData } from '../data/toursData';
+import { getTours } from '../firebase/atlasFirebaseApi';
 import colors from '../styles/colors';
 import spacing from '../styles/spacing';
 
 const FILTER_OPTIONS = ['all', 'international', 'domestic'];
 
-export default function ToursScreen({ navigation }) {
-  const { brandName } = useTheme();
-  const [selectedType, setSelectedType] = useState('all');
-  const [destinationQuery, setDestinationQuery] = useState('');
-  const [minPrice, setMinPrice] = useState('');
-  const [maxPrice, setMaxPrice] = useState('');
-  const [appliedFilters, setAppliedFilters] = useState({
-    selectedType: 'all',
-    destinationQuery: '',
-    minPrice: '',
-    maxPrice: '',
-  });
-
-  const filteredTours = toursData.filter((tour) => {
-    const matchesType = appliedFilters.selectedType === 'all' || tour.type === appliedFilters.selectedType;
-    const searchValue = appliedFilters.destinationQuery.trim().toLowerCase();
-    const matchesDestination =
-      searchValue.length === 0 ||
-      tour.location.toLowerCase().includes(searchValue) ||
-      tour.title.toLowerCase().includes(searchValue);
-    const min = appliedFilters.minPrice === '' ? null : Number(appliedFilters.minPrice);
-    const max = appliedFilters.maxPrice === '' ? null : Number(appliedFilters.maxPrice);
-    const matchesMin = min === null || tour.price >= min;
-    const matchesMax = max === null || tour.price <= max;
-
-    return matchesType && matchesDestination && matchesMin && matchesMax;
-  });
-
-  const applyFilters = () => {
-    setAppliedFilters({
-      selectedType,
-      destinationQuery,
-      minPrice,
-      maxPrice,
-    });
-  };
-
-  const openCart = () => {
-    navigation.navigate('Cart');
-  };
-
-  const renderHeader = () => (
+function ToursHeader({
+  appliedCount,
+  brandName,
+  destinationQuery,
+  loading,
+  maxPrice,
+  minPrice,
+  onApplyFilters,
+  onChangeDestination,
+  onChangeMaxPrice,
+  onChangeMinPrice,
+  onSelectType,
+  selectedType,
+}) {
+  return (
     <View style={styles.headerContent}>
       <ScreenHeader brandName={brandName} pageLabel="Tours" />
 
@@ -73,9 +46,9 @@ export default function ToursScreen({ navigation }) {
               <AppButton
                 key={option}
                 label={option === 'all' ? 'All Tours' : option[0].toUpperCase() + option.slice(1)}
-                onPress={() => setSelectedType(option)}
+                onPress={() => onSelectType(option)}
                 style={styles.filterButton}
-                textStyle={selected ? styles.selectedFilterLabel : undefined}
+                textStyle={[styles.filterButtonLabel, selected && styles.selectedFilterLabel]}
                 variant={selected ? 'primary' : 'secondary'}
               />
             );
@@ -84,7 +57,7 @@ export default function ToursScreen({ navigation }) {
 
         <AppInput
           label="Destination"
-          onChangeText={setDestinationQuery}
+          onChangeText={onChangeDestination}
           placeholder="Search by location or tour title"
           value={destinationQuery}
         />
@@ -94,7 +67,7 @@ export default function ToursScreen({ navigation }) {
             <AppInput
               keyboardType="numeric"
               label="Min Price"
-              onChangeText={setMinPrice}
+              onChangeText={onChangeMinPrice}
               placeholder="0"
               value={minPrice}
             />
@@ -103,45 +76,120 @@ export default function ToursScreen({ navigation }) {
             <AppInput
               keyboardType="numeric"
               label="Max Price"
-              onChangeText={setMaxPrice}
+              onChangeText={onChangeMaxPrice}
               placeholder="20000"
               value={maxPrice}
             />
           </View>
         </View>
 
-        <AppButton label="Apply Filters" onPress={applyFilters} />
+        <AppButton label="Apply Filters" onPress={onApplyFilters} style={styles.applyButton} />
       </AppCard>
 
       <View style={styles.resultsRow}>
-        <Text style={styles.resultsText}>Showing {filteredTours.length} tours</Text>
+        <Text style={styles.resultsText}>{loading ? 'Loading tours...' : `Showing ${appliedCount} tours`}</Text>
       </View>
     </View>
   );
+}
 
-  const renderFooter = () => (
+function ToursFooter() {
+  return (
     <View style={styles.footerStack}>
       <AppFooter />
     </View>
   );
+}
+
+export default function ToursScreen({ navigation }) {
+  const { brandName } = useTheme();
+  const [tours, setTours] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [dataError, setDataError] = useState('');
+  const [selectedType, setSelectedType] = useState('all');
+  const [destinationQuery, setDestinationQuery] = useState('');
+  const [minPrice, setMinPrice] = useState('');
+  const [maxPrice, setMaxPrice] = useState('');
+  const [appliedFilters, setAppliedFilters] = useState({
+    selectedType: 'all',
+    destinationQuery: '',
+    minPrice: '',
+    maxPrice: '',
+  });
+
+  useEffect(() => {
+    let mounted = true;
+
+    const loadTours = async () => {
+      setLoading(true);
+      try {
+        const databaseTours = await getTours(appliedFilters);
+
+        if (mounted) {
+          setTours(databaseTours);
+          setDataError('');
+          setLoading(false);
+        }
+      } catch (error) {
+        if (mounted) {
+          setTours([]);
+          setDataError(error.message || 'Firebase tours could not be loaded.');
+          setLoading(false);
+        }
+      }
+    };
+
+    loadTours();
+
+    return () => {
+      mounted = false;
+    };
+  }, [appliedFilters]);
+
+  const applyFilters = () => {
+    setAppliedFilters({
+      selectedType,
+      destinationQuery,
+      minPrice,
+      maxPrice,
+    });
+  };
 
   return (
     <AppScreen>
       <FlatList
         contentContainerStyle={styles.listContent}
-        data={filteredTours}
+        data={tours}
+        keyboardShouldPersistTaps="handled"
         keyExtractor={(item) => item.id.toString()}
         ListEmptyComponent={
           <AppCard style={styles.emptyCard}>
             <Text style={styles.emptyTitle}>No tours found</Text>
-            <Text style={styles.emptyText}>Try changing the destination or price filters to see more options.</Text>
+            <Text style={styles.emptyText}>
+              {dataError || (loading ? 'Loading Firebase tours now.' : 'Try changing the destination or price filters to see more options.')}
+            </Text>
           </AppCard>
         }
-        ListFooterComponent={renderFooter}
-        ListHeaderComponent={renderHeader}
+        ListFooterComponent={<ToursFooter />}
+        ListHeaderComponent={
+          <ToursHeader
+            appliedCount={tours.length}
+            brandName={brandName}
+            destinationQuery={destinationQuery}
+            loading={loading}
+            maxPrice={maxPrice}
+            minPrice={minPrice}
+            onApplyFilters={applyFilters}
+            onChangeDestination={setDestinationQuery}
+            onChangeMaxPrice={setMaxPrice}
+            onChangeMinPrice={setMinPrice}
+            onSelectType={setSelectedType}
+            selectedType={selectedType}
+          />
+        }
         renderItem={({ item }) => (
           <TourCard
-            onPress={() => navigation.navigate('TourDetail', { tourTitle: item.title })}
+            onPress={() => navigation.navigate('TourDetail', { slug: item.slug })}
             tour={item}
           />
         )}
@@ -162,18 +210,28 @@ const styles = StyleSheet.create({
     marginBottom: spacing.lg,
   },
   filterCard: {
-    gap: spacing.md,
+    gap: spacing.sm,
+    padding: spacing.md,
+    borderRadius: 14,
   },
   filterLabel: {
     color: colors.text,
-    fontSize: 15,
+    fontSize: 13,
     fontWeight: '700',
   },
   filterOptions: {
+    flexDirection: 'row',
     gap: spacing.sm,
   },
   filterButton: {
-    width: '100%',
+    flex: 1,
+    minHeight: 38,
+    paddingHorizontal: 6,
+    borderRadius: 10,
+  },
+  filterButtonLabel: {
+    fontSize: 12,
+    lineHeight: 16,
   },
   selectedFilterLabel: {
     color: colors.textLight,
@@ -185,6 +243,10 @@ const styles = StyleSheet.create({
   priceInput: {
     flex: 1,
     minWidth: 0,
+  },
+  applyButton: {
+    minHeight: 42,
+    borderRadius: 10,
   },
   resultsRow: {
     flexDirection: 'row',

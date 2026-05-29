@@ -1,0 +1,35 @@
+Atlas Tours Submission Checklist
+
+Required Submission Items:
+
+1. Full project source code
+   Option A: Submit the GitHub repository link.
+   Option B: Submit a ZIP file of the project.
+
+   Recommended ZIP exclusions:
+   - node_modules
+   - dist
+   - .expo
+   - .git
+
+2. Project documentation
+   Editable source file:
+   - submission/ProjectDocumentation.md
+
+   Final submission format:
+   - Convert the documentation to DOCX or PDF before submitting.
+
+3. Team information
+   File:
+   - submission/TeamInfo.txt
+
+Before Submission:
+
+1. Add Firebase values in the local .env file.
+2. Run the app using:
+   npx expo start --clear
+3. Test the booking flow.
+4. Confirm orders appear in Firebase Console.
+5. Update TeamInfo.txt with real student details.
+6. Export ProjectDocumentation.md to DOCX or PDF.
+7. Create a clean ZIP if GitHub is not being used.

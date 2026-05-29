@@ -20,13 +20,13 @@ export default function TestimonialCard({ testimonial }) {
           <Text style={styles.avatarText}>{initialsFromName(testimonial.name)}</Text>
         </View>
         <View style={styles.meta}>
-          <Text style={styles.name}>{testimonial.name}</Text>
-          <Text style={styles.location}>{testimonial.location}</Text>
+          <Text numberOfLines={1} style={styles.name}>{testimonial.name}</Text>
+          <Text numberOfLines={1} style={styles.location}>{testimonial.location}</Text>
         </View>
       </View>
-      <Text style={styles.stars}>★★★★★</Text>
-      <Text style={styles.quote}>{testimonial.quote}</Text>
-      <Text style={styles.trip}>{testimonial.trip}</Text>
+      <Text style={styles.stars}>{'\u2605'.repeat(testimonial.rating ?? 5)}</Text>
+      <Text ellipsizeMode="tail" numberOfLines={4} style={styles.quote}>{testimonial.quote}</Text>
+      <Text numberOfLines={1} style={styles.trip}>{testimonial.trip}</Text>
     </AppCard>
   );
 }
@@ -34,6 +34,8 @@ export default function TestimonialCard({ testimonial }) {
 const styles = StyleSheet.create({
   card: {
     gap: spacing.md,
+    width: '100%',
+    height: 248,
   },
   header: {
     flexDirection: 'row',
@@ -70,10 +72,13 @@ const styles = StyleSheet.create({
   },
   stars: {
     color: colors.accent,
-    fontSize: 14,
-    letterSpacing: 1,
+    fontSize: 18,
+    fontWeight: '800',
+    letterSpacing: 2,
+    lineHeight: 22,
   },
   quote: {
+    flex: 1,
     color: colors.text,
     fontSize: 15,
     lineHeight: 23,
